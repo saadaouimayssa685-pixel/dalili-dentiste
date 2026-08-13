@@ -19,11 +19,8 @@ import {
   Search,
   Server,
   ShieldCheck,
-  Star,
-  TrendingUp,
   UserRound,
   UserRoundCheck,
-  Users,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -139,13 +136,6 @@ function IconAction({
     </Tooltip>
   );
 }
-
-const STATS = [
-  { icon: Users, label: "Cabinets référencés", value: "3 482", trend: "+128 ce mois" },
-  { icon: Eye, label: "Vues de profil", value: "24 715", trend: "+12,4 %" },
-  { icon: Phone, label: "Appels générés", value: "1 209", trend: "+8,1 %" },
-  { icon: Star, label: "Note moyenne", value: "4,7 / 5", trend: "sur 6 340 avis" },
-];
 
 const ACTION_CARDS = [
   {
@@ -365,27 +355,6 @@ export function ProDashboard() {
           {section === "overview" ? (
             <>
               <OverviewDashboard />
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {STATS.map((s) => (
-                  <div
-                    key={s.label}
-                    className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-lift)]"
-                  >
-                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-                      <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        {s.label}
-                      </p>
-                      <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-turquoise/12 text-turquoise">
-                        <s.icon className="size-4" />
-                      </span>
-                    </div>
-                    <p className="mt-3 text-2xl font-extrabold text-navy">{s.value}</p>
-                    <p className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-turquoise">
-                      <TrendingUp className="size-3.5" /> {s.trend}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </>
           ) : null}
 
