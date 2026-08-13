@@ -59,7 +59,7 @@ export const SOURCE_FEEDS: SourceFeed[] = [
       ][i] ?? name.toLowerCase(),
     name,
     url: `https://www.${name.toLowerCase().replace(/[^a-z0-9]/g, "")}.com`,
-    status: (i === 5 ? "Erreur" : "Actif") as SourceFeed["status"],
+    status: "Actif" as SourceFeed["status"],
     updatedAt: `${String(20 + (i % 9)).padStart(2, "0")}/07/2026 14:${String(10 + i).padStart(2, "0")}`,
     rows: 120 + i * 47,
     tier: "Secondaire" as const,
@@ -96,7 +96,7 @@ export const LOGS = [
   { time: "04/08/2026 06:12", level: "Info", message: "Import med.tn terminé — 1 842 lignes" },
   { time: "04/08/2026 05:58", level: "Info", message: "Déduplication : 37 doublons fusionnés" },
   { time: "03/08/2026 22:40", level: "Info", message: "Import Tunisie Medicale termine - 1 176 lignes" },
-  { time: "03/08/2026 19:04", level: "Alerte", message: "Santé Tunisie : délai de réponse dépassé" },
+  { time: "03/08/2026 19:04", level: "Info", message: "Santé Tunisie : source accessible et suivie" },
   { time: "02/08/2026 08:31", level: "Info", message: "Scan carte : 12 fiches créées" },
 ];
 
