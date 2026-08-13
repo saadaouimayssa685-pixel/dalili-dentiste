@@ -13,14 +13,6 @@ on:
         options:
           - "false"
           - "true"
-      dry_run:
-        description: "Simuler une mise a jour hebdomadaire"
-        required: true
-        default: "true"
-        type: choice
-        options:
-          - "true"
-          - "false"
 
 jobs:
   source-health:
@@ -60,41 +52,3 @@ jobs:
         with:
           name: source-health-report
           path: backend/reports/source_health_latest.json
-
-  dry-run-update:
-    name: Weekly update dry run
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == 'true' }}
-
-    defaults:
-      run:
-        working-directory: backend
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-          cache-dependency-path: backend/pyproject.toml
-
-      - name: Install backend dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
-
-      - name: Run safe weekly dry run
-        env:
-          DALILI_DRY_RUN: "1"
-        run: python scripts/run_weekly_update.py --dry-run --trigger-type scheduled --max-sources 2 --max-profiles-per-source 20
-
-      - name: Upload generated maintenance reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: weekly-maintenance-reports
-          path: |
-            backend/reports/weekly_update_*.json
-            backend/reports/weekly_update_*.md

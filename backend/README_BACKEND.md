@@ -8,7 +8,7 @@ This folder contains the useful Python backend for Dalili Dentiste:
 - quality scoring
 - OCR for business cards
 - local multilingual chatbot
-- export and automation utilities
+- export utilities and GitHub Actions maintenance
 
 ## Current Backend Reality
 

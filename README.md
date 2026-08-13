@@ -79,8 +79,9 @@ python scripts\export_public_index.py
 
 ```text
 Dalili Dentiste/
-  backend/      FastAPI backend, scrapers, SQL, OCR, chatbot, automation
+  backend/      FastAPI backend, scrapers, SQL, OCR, chatbot
   frontend/     Lovable/Vite frontend connected to the backend
+  .github/      GitHub Actions CI and source-health maintenance
   README.md     Main repository overview
 ```
 

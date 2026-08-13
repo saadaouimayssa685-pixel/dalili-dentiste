@@ -15,9 +15,10 @@ from pydantic import BaseModel
 from sqlalchemy import func, or_, text
 
 from app.chatbot import ChatbotContext, local_llm
-from app.config import ROOT
+from app.config import ROOT, settings
 from app.database import SessionLocal, init_db
 from app.models import DentistRecord
+from app.normalization.locations import locations
 from app.services.business_card_ocr import paddleocr_available, scan_business_card
 
 
@@ -219,18 +220,36 @@ def overview(
     with_specialty = sum(bool(_json_list(row.get("specialties"))) for row in rows)
     with_locality = sum(bool(_clean(row.get("locality"))) for row in rows)
     duplicate_rows = sum(int(row.get("source_count") or 1) > 1 for row in rows)
+    valid_governorates = _official_governorates()
+    covered_governorates = {
+        normalized
+        for row in rows
+        if (normalized := locations.governorate(_clean(row.get("governorate")))) in valid_governorates
+    }
 
-    def counts(key: str) -> list[dict[str, Any]]:
+    def counts(
+        key: str,
+        *,
+        official_governorates_only: bool = False,
+        clean_localities: bool = False,
+    ) -> list[dict[str, Any]]:
         grouped: dict[str, int] = {}
         for row in rows:
-            value = _clean(row.get(key)) or "Non renseigné"
+            value = _clean(row.get(key))
+            if key == "governorate" and value:
+                value = locations.governorate(value)
+            if official_governorates_only and value not in valid_governorates:
+                continue
+            if clean_localities and not _dashboard_locality_is_usable(value):
+                continue
+            value = value or "Non renseigne"
             grouped[value] = grouped.get(value, 0) + 1
         return [{"name": name, "dentists": count} for name, count in sorted(grouped.items(), key=lambda item: (-item[1], item[0]))]
 
     speciality_counts: dict[str, int] = {}
     source_counts: dict[str, dict[str, int]] = {}
     for row in rows:
-        for item in _json_list(row.get("specialties")) or ["Omnipratique"]:
+        for item in _dashboard_specialties(row.get("specialties")):
             speciality_counts[item] = speciality_counts.get(item, 0) + 1
         for item in _split_sources(row.get("sources")) or ["Source inconnue"]:
             bucket = source_counts.setdefault(item, {"phone": 0, "noPhone": 0, "duplicates": 0})
@@ -255,17 +274,28 @@ def overview(
             "rows": source_rows,
             "withPhone": with_phone,
             "withPhonePct": quality[0]["value"],
-            "governorates": f"{len({row.get('governorate') for row in rows if _clean(row.get('governorate'))})}/24",
-            "governoratesPct": round((len({row.get('governorate') for row in rows if _clean(row.get('governorate'))}) / 24) * 100, 1),
+            "governorates": f"{len(covered_governorates)}/24",
+            "governoratesPct": min(100, round((len(covered_governorates) / 24) * 100, 1)),
         },
         "monthly": [{"month": datetime.now(timezone.utc).strftime("%b"), "dentists": total}],
-        "topGovernorates": counts("governorate")[:10],
+        "topGovernorates": counts("governorate", official_governorates_only=True)[:10],
         "specialities": [{"name": name, "value": value} for name, value in sorted(speciality_counts.items(), key=lambda item: -item[1])[:8]],
         "sources": [{"name": name, **values} for name, values in sorted(source_counts.items(), key=lambda item: -sum(item[1].values()))],
-        "coverage": counts("governorate"),
+        "coverage": counts("governorate", official_governorates_only=True),
         "localities": [
-            {"locality": name, "governorate": next((row.get("governorate") for row in rows if _clean(row.get("locality")) == name), None), "dentists": count}
-            for name, count in [(item["name"], item["dentists"]) for item in counts("locality")[:20]]
+            {
+                "locality": name,
+                "governorate": next(
+                    (
+                        locations.governorate(_clean(row.get("governorate")))
+                        for row in rows
+                        if _clean(row.get("locality")) == name
+                    ),
+                    None,
+                ),
+                "dentists": count,
+            }
+            for name, count in [(item["name"], item["dentists"]) for item in counts("locality", clean_localities=True)[:12]]
         ],
         "quality": quality,
     }
@@ -713,6 +743,82 @@ def _first_specialty(value: Any) -> str | None:
 
 def _split_sources(value: Any) -> list[str]:
     return [part.strip() for part in str(value or "").split("|") if part.strip()]
+
+
+def _official_governorates() -> set[str]:
+    return {str(item.get("name")) for item in settings.locations.get("governorates", []) if item.get("name")}
+
+
+def _dashboard_specialties(value: Any) -> list[str]:
+    mapped: list[str] = []
+    for item in _json_list(value):
+        normalized = str(item).strip().casefold()
+        if not normalized:
+            continue
+        blocked_fragments = [
+            "facebook",
+            "instagram",
+            "whatsapp",
+            "mode",
+            "reglement",
+            "règlement",
+            "espece",
+            "espèce",
+            "langue",
+            "assurance",
+            "horaire",
+            "adresse",
+            "telephone",
+            "téléphone",
+        ]
+        if any(fragment in normalized for fragment in blocked_fragments):
+            continue
+        if "orthodont" in normalized:
+            label = "Orthodontie"
+        elif "implant" in normalized:
+            label = "Implantologie"
+        elif "paro" in normalized:
+            label = "Parodontologie"
+        elif "chirurg" in normalized:
+            label = "Chirurgie dentaire"
+        elif "esthet" in normalized or "esthét" in normalized:
+            label = "Dentisterie esthetique"
+        elif "pedi" in normalized or "pédi" in normalized or "enfant" in normalized:
+            label = "Pedodontie"
+        elif "dent" in normalized or "omni" in normalized:
+            label = "Omnipratique"
+        else:
+            continue
+        if label not in mapped:
+            mapped.append(label)
+    return mapped or ["Omnipratique"]
+
+
+def _dashboard_locality_is_usable(value: Any) -> bool:
+    cleaned = _clean(value)
+    if not cleaned:
+        return False
+    normalized = cleaned.casefold()
+    blocked_fragments = [
+        "non renseign",
+        "voir sur map",
+        "voir sur",
+        "map",
+        "itineraire",
+        "itinéraire",
+        "qui somme",
+        "facebook",
+        "instagram",
+        "whatsapp",
+        "appelez",
+        "contact",
+        "tous les",
+    ]
+    if any(fragment in normalized for fragment in blocked_fragments):
+        return False
+    if len(cleaned) < 3 or len(cleaned) > 42:
+        return False
+    return any(char.isalpha() for char in cleaned)
 
 
 def _clean(value: Any) -> str | None:

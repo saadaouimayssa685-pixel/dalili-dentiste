@@ -1,3 +1,5 @@
+import { MapPinned } from "lucide-react";
+
 import { ChartCard } from "./ChartCard";
 import { formatNumber, type OverviewData } from "@/lib/overview-data";
 
@@ -6,11 +8,12 @@ const POSITIONS: Record<string, { x: number; y: number }> = {
   Tunis: { x: 60, y: 15 },
   Ariana: { x: 57, y: 12 },
   "Ben Arous": { x: 61, y: 19 },
+  Manouba: { x: 52, y: 17 },
   "La Manouba": { x: 52, y: 17 },
   Nabeul: { x: 75, y: 20 },
   Zaghouan: { x: 57, y: 25 },
-  "Béja": { x: 38, y: 18 },
   Beja: { x: 38, y: 18 },
+  "Béja": { x: 38, y: 18 },
   Jendouba: { x: 27, y: 22 },
   "Le Kef": { x: 30, y: 33 },
   Siliana: { x: 43, y: 34 },
@@ -23,80 +26,85 @@ const POSITIONS: Record<string, { x: number; y: number }> = {
   Sfax: { x: 62, y: 63 },
   Gafsa: { x: 35, y: 70 },
   Tozeur: { x: 24, y: 76 },
-  "Kébili": { x: 42, y: 82 },
   Kebili: { x: 42, y: 82 },
-  "Gabès": { x: 57, y: 77 },
+  "Kébili": { x: 42, y: 82 },
   Gabes: { x: 57, y: 77 },
-  "Médenine": { x: 66, y: 88 },
+  "Gabès": { x: 57, y: 77 },
   Medenine: { x: 66, y: 88 },
+  "Médenine": { x: 66, y: 88 },
   Tataouine: { x: 56, y: 96 },
 };
 
 export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] }) {
   const max = Math.max(...data.map((d) => d.dentists), 1);
-  const covered = data.filter((d) => d.dentists > 0).length;
+  const covered = Math.min(24, data.filter((d) => d.dentists > 0).length);
   const top = [...data].sort((a, b) => b.dentists - a.dentists).slice(0, 6);
 
   return (
     <ChartCard
-      title="Cartographie nationale"
-      subtitle={`Couverture : ${covered}/24 gouvernorats (${Math.round((covered / 24) * 100)} %)`}
+      title="Carte de couverture nationale"
+      subtitle={`Couverture officielle : ${covered}/24 gouvernorats (${Math.round((covered / 24) * 100)} %)`}
+      action={
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-turquoise/10 px-3 py-1 text-xs font-bold text-turquoise">
+          <MapPinned className="size-3.5" /> Points proportionnels
+        </span>
+      }
     >
-      <div className="grid gap-4 xl:grid-cols-[1fr_190px]">
-        <div className="relative h-[420px] overflow-hidden rounded-[2rem] border border-border bg-[radial-gradient(circle_at_72%_18%,rgba(18,103,216,0.12),transparent_30%),linear-gradient(135deg,#f8fcff,#e9f7fb)]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_240px]">
+        <div className="relative h-[500px] overflow-hidden rounded-[2rem] border border-border bg-[radial-gradient(circle_at_80%_12%,rgba(18,103,216,0.14),transparent_26%),linear-gradient(135deg,#f8fcff,#e5f8fb)]">
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,26,69,0.035)_1px,transparent_1px),linear-gradient(rgba(7,26,69,0.035)_1px,transparent_1px)] bg-[size:28px_28px]" />
           <div
-            className="absolute left-[18%] top-[4%] h-[92%] w-[66%] rounded-[48%_52%_60%_40%/18%_20%_80%_82%] border border-turquoise/25 bg-white/80 shadow-inner"
+            className="absolute left-[18%] top-[4%] h-[92%] w-[66%] rounded-[48%_52%_60%_40%/18%_20%_80%_82%] border border-turquoise/25 bg-white/80 shadow-[inset_0_0_80px_rgba(20,160,170,0.08)]"
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,26,69,0.04)_1px,transparent_1px),linear-gradient(rgba(7,26,69,0.04)_1px,transparent_1px)] bg-[size:30px_30px]" />
+          <div className="absolute left-6 top-6 rounded-2xl border border-white/80 bg-white/80 px-4 py-3 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Densite cabinets</p>
+            <p className="mt-1 text-2xl font-black text-navy">{formatNumber(data.reduce((s, g) => s + g.dentists, 0))}</p>
+          </div>
           {data.map((g) => {
             const pos = POSITIONS[g.name] ?? { x: 50, y: 50 };
             const ratio = g.dentists / max;
-            const size = 10 + ratio * 28;
+            const size = 9 + ratio * 34;
             return (
-              <div
+              <button
                 key={g.name}
                 className="group absolute -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
                 title={`${g.name} - ${formatNumber(g.dentists)} dentistes`}
+                type="button"
               >
                 <span
-                  className="block rounded-full border-2 border-white bg-turquoise shadow-lg ring-4 ring-turquoise/10 transition group-hover:scale-125 group-hover:bg-primary"
+                  className="block rounded-full border-[3px] border-white bg-turquoise shadow-lg ring-4 ring-turquoise/12 transition duration-200 group-hover:scale-125 group-hover:bg-primary group-hover:ring-primary/20"
                   style={{ width: size, height: size }}
                 />
-                <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-1 hidden -translate-x-1/2 whitespace-nowrap rounded-full bg-navy px-2 py-1 text-[10px] font-semibold text-white shadow-lg group-hover:block">
+                <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 hidden -translate-x-1/2 whitespace-nowrap rounded-full bg-navy px-3 py-1.5 text-[11px] font-bold text-white shadow-lg group-hover:block">
                   {g.name} · {formatNumber(g.dentists)}
                 </span>
-              </div>
+              </button>
             );
           })}
         </div>
 
-        <div className="rounded-2xl bg-soft/70 p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-            Gouvernorats leaders
-          </p>
-          <div className="mt-3 space-y-3">
-            {top.map((g) => {
+        <aside className="rounded-3xl border border-border bg-soft/70 p-4">
+          <p className="text-xs font-black uppercase tracking-wide text-muted-foreground">Zones les plus denses</p>
+          <div className="mt-4 space-y-3">
+            {top.map((g, index) => {
               const width = `${Math.max(8, (g.dentists / max) * 100)}%`;
               return (
-                <div key={g.name}>
+                <div key={g.name} className="rounded-2xl bg-white/80 p-3">
                   <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="truncate font-semibold text-navy">{g.name}</span>
+                    <span className="font-black text-primary">#{index + 1}</span>
                     <span className="font-bold text-turquoise">{formatNumber(g.dentists)}</span>
                   </div>
-                  <div className="mt-1 h-2 overflow-hidden rounded-full bg-white">
+                  <p className="mt-1 truncate font-black text-navy">{g.name}</p>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-soft-2">
                     <div className="h-full rounded-full bg-gradient-to-r from-turquoise to-primary" style={{ width }} />
                   </div>
                 </div>
               );
             })}
           </div>
-          <div className="mt-5 rounded-2xl bg-white/80 p-3 text-xs text-muted-foreground">
-            Les points representent les cabinets consolides par gouvernorat. Plus le point est grand,
-            plus la zone est dense.
-          </div>
-        </div>
+        </aside>
       </div>
     </ChartCard>
   );
