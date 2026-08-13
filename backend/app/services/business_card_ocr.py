@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import os
 import re
 import tempfile
@@ -144,12 +145,7 @@ class BusinessCardOcrResult:
 
 
 def paddleocr_available() -> bool:
-    try:
-        import paddleocr  # noqa: F401
-
-        return True
-    except Exception:
-        return False
+    return importlib.util.find_spec("paddleocr") is not None
 
 
 def run_paddle_ocr(image_bytes: bytes, suffix: str = ".png") -> list[str]:
