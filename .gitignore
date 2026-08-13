@@ -1,0 +1,32 @@
+# Root
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Backend runtime and generated artifacts
+backend/.local/
+backend/database/*.db
+backend/database/*.sqlite
+backend/database/*.sqlite3
+backend/work/
+backend/runtime/
+backend/outputs/
+backend/exports/
+backend/*.log
+
+# Frontend
+frontend/.env.local
+frontend/node_modules/
+frontend/.output/
+frontend/dist/
+frontend/.tanstack/
+
+# Editors
+.idea/
+.vscode/

@@ -1,0 +1,133 @@
+﻿sources:
+  - id: "med.tn"
+    name: "Med.tn"
+    enabled: true
+    priority: 30
+    parser: "med_tn"
+    notes: "Source pratique, pages publiques + endpoint AJAX public détecté."
+
+  - id: "lerdvmedical"
+    name: "Le RDV Medical"
+    enabled: true
+    priority: 40
+    parser: "generic_profile"
+    start_urls:
+      - "https://lerdvmedical.tn/medecin-dentiste-a-tunis"
+    profile_url_regex: "/archives/doctors/[^#?]+$"
+    listing_url_templates:
+      Tunis:
+        - "https://lerdvmedical.tn/medecin-dentiste-a-tunis"
+
+  - id: "tunisie_medicale"
+    name: "Tunisie Médicale"
+    enabled: true
+    priority: 50
+    parser: "generic_profile"
+    max_pages: 250
+    start_urls:
+      - "https://tunisie-medicale.com/index.php/dentiste"
+    profile_url_regex: "/index\\.php/dentiste/[0-9]+-[^#?]+$"
+
+  - id: "tunisie_dentiste"
+    name: "Tunisie Dentiste"
+    enabled: true
+    priority: 60
+    parser: "generic_profile"
+    start_urls:
+      - "https://tunisie-dentiste.com/dentiste/"
+    profile_url_regex: "/dentiste/[^#?]+/$"
+    listing_url_templates:
+      Tunis:
+        - "https://tunisie-dentiste.com/gouvernorat/tunis/"
+      Ariana:
+        - "https://tunisie-dentiste.com/gouvernorat/ariana/"
+      Ben Arous:
+        - "https://tunisie-dentiste.com/gouvernorat/ben-arous/"
+      Manouba:
+        - "https://tunisie-dentiste.com/gouvernorat/manouba/"
+      Nabeul:
+        - "https://tunisie-dentiste.com/gouvernorat/nabeul/"
+      Sousse:
+        - "https://tunisie-dentiste.com/gouvernorat/sousse/"
+      Monastir:
+        - "https://tunisie-dentiste.com/gouvernorat/monastir/"
+      Mahdia:
+        - "https://tunisie-dentiste.com/gouvernorat/mahdia/"
+      Sfax:
+        - "https://tunisie-dentiste.com/gouvernorat/sfax/"
+      Bizerte:
+        - "https://tunisie-dentiste.com/gouvernorat/bizerte/"
+      Béja:
+        - "https://tunisie-dentiste.com/gouvernorat/beja/"
+      Jendouba:
+        - "https://tunisie-dentiste.com/gouvernorat/jendouba/"
+      Le Kef:
+        - "https://tunisie-dentiste.com/gouvernorat/le-kef/"
+      Siliana:
+        - "https://tunisie-dentiste.com/gouvernorat/siliana/"
+      Zaghouan:
+        - "https://tunisie-dentiste.com/gouvernorat/zaghouan/"
+      Kairouan:
+        - "https://tunisie-dentiste.com/gouvernorat/kairouan/"
+      Kasserine:
+        - "https://tunisie-dentiste.com/gouvernorat/kasserine/"
+      Sidi Bouzid:
+        - "https://tunisie-dentiste.com/gouvernorat/sidi-bouzid/"
+      Gabès:
+        - "https://tunisie-dentiste.com/gouvernorat/gabes/"
+      Médenine:
+        - "https://tunisie-dentiste.com/gouvernorat/medenine/"
+      Tataouine:
+        - "https://tunisie-dentiste.com/gouvernorat/tataouine/"
+      Gafsa:
+        - "https://tunisie-dentiste.com/gouvernorat/gafsa/"
+      Tozeur:
+        - "https://tunisie-dentiste.com/gouvernorat/tozeur/"
+      Kébili:
+        - "https://tunisie-dentiste.com/gouvernorat/kebili/"
+
+  - id: "goafricaonline"
+    name: "Go Africa Online"
+    enabled: true
+    priority: 90
+    parser: "generic_profile"
+    start_urls:
+      - "https://www.goafricaonline.com/tn/annuaire/dentistes"
+    profile_url_regex: "/tn/[0-9]+-[^#?]+$"
+    notes: "Annuaire entreprises/cabinets dentaires, volume modeste mais fiches détaillées."
+
+  - id: "orthodontiste_tn"
+    name: "Orthodontiste.tn"
+    enabled: true
+    priority: 95
+    parser: "direct_listing"
+    start_urls:
+      - "https://orthodontiste.tn/dr/"
+    notes: "Liste directe des orthodontistes avec téléphone/adresse dans la page."
+
+  - id: "para_doctor"
+    name: "Para Doctor"
+    enabled: true
+    priority: 100
+    parser: "direct_listing"
+    start_urls:
+      - "https://www.para-doctor.tn/dentiste-a-ksar-hellal/"
+    notes: "Première page dentistes analysée; autres villes à ajouter après validation."
+
+  - id: "sante_tunisie"
+    name: "Santé Tunisie"
+    enabled: true
+    priority: 20
+    parser: "generic_profile"
+    start_urls:
+      - "https://santetunisie.rns.tn/fr/component/annuaire/?view=dentistes"
+    notes: "Accès HTTP direct instable durant les tests; garder désactivé jusqu'à validation."
+
+  - id: "bonnes_adresses"
+    name: "Bonnes Adresses"
+    enabled: true
+    priority: 80
+    parser: "generic_profile"
+    start_urls:
+      - "https://www.bonnes-adresses.tn/dentistes-en-tunisie.htm"
+    notes: "Page observée surtout comme page de catégorie; activer après vérification des liens de fiches."

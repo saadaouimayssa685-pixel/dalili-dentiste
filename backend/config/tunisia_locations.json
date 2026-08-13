@@ -1,0 +1,29 @@
+{
+  "country": "Tunisie",
+  "governorates": [
+    {"name": "Tunis", "aliases": ["tunis"], "localities": [{"name": "La Marsa", "aliases": ["marsa"]}, {"name": "El Manar", "aliases": ["el manar", "manar", "el manar 2", "el manar 3"]}, {"name": "Centre Urbain Nord", "aliases": ["centre urbain nord"]}, {"name": "Le Kram", "aliases": ["kram", "le kram"]}, {"name": "La Goulette", "aliases": ["la goulette", "goulette"]}, {"name": "Tunis Belvedere", "aliases": ["tunis belvedere", "tunis belvédère", "belvedere", "belvédère"]}]},
+    {"name": "Ariana", "aliases": ["ariana", "l ariana", "l'ariana"], "localities": [{"name": "Ariana", "aliases": ["ariana", "l ariana"]}, {"name": "L'Aouina", "aliases": ["aouina", "l aouina"]}]},
+    {"name": "Ben Arous", "aliases": ["ben arous"], "localities": []},
+    {"name": "Manouba", "aliases": ["manouba", "mannouba", "la manouba", "la mannouba"], "localities": [{"name": "La Manouba", "aliases": ["la manouba", "la mannouba", "manouba", "mannouba"]}]},
+    {"name": "Sfax", "aliases": ["sfax", "safaqis"], "localities": []},
+    {"name": "Sousse", "aliases": ["sousse"], "localities": [{"name": "Msaken", "aliases": ["msaken", "msakin"]}]},
+    {"name": "Médenine", "aliases": ["medenine", "médenine"], "localities": [{"name": "Médenine", "aliases": ["medenine", "médenine"]}, {"name": "Zarzis", "aliases": ["zarzis"]}, {"name": "Ben Gardane", "aliases": ["ben gardane", "ben guerdane"]}]},
+    {"name": "Kébili", "aliases": ["kebili", "kébili", "qibili"], "localities": [{"name": "Kébili Nord", "aliases": ["kebili nord", "kébili nord"]}, {"name": "Kébili Sud", "aliases": ["kebili sud", "kébili sud"]}, {"name": "Douz", "aliases": ["douz"]}, {"name": "Souk El Ahad", "aliases": ["souk el ahad", "souk lahad"]}, {"name": "El Faouar", "aliases": ["el faouar", "faouar"]}]},
+    {"name": "Nabeul", "aliases": ["nabeul"], "localities": [{"name": "Hammamet", "aliases": ["hammamet"]}]},
+    {"name": "Monastir", "aliases": ["monastir"], "localities": [{"name": "Ksar Hellal", "aliases": ["ksar hellal", "ksar helal"]}]},
+    {"name": "Mahdia", "aliases": ["mahdia"], "localities": []},
+    {"name": "Bizerte", "aliases": ["bizerte"], "localities": []},
+    {"name": "Béja", "aliases": ["beja", "béja"], "localities": []},
+    {"name": "Jendouba", "aliases": ["jendouba"], "localities": []},
+    {"name": "Le Kef", "aliases": ["kef", "le kef"], "localities": []},
+    {"name": "Siliana", "aliases": ["siliana"], "localities": []},
+    {"name": "Zaghouan", "aliases": ["zaghouan"], "localities": []},
+    {"name": "Kairouan", "aliases": ["kairouan"], "localities": []},
+    {"name": "Kasserine", "aliases": ["kasserine"], "localities": []},
+    {"name": "Sidi Bouzid", "aliases": ["sidi bouzid"], "localities": []},
+    {"name": "Gabès", "aliases": ["gabes", "gabès"], "localities": []},
+    {"name": "Tataouine", "aliases": ["tataouine"], "localities": []},
+    {"name": "Gafsa", "aliases": ["gafsa"], "localities": []},
+    {"name": "Tozeur", "aliases": ["tozeur"], "localities": []}
+  ]
+}

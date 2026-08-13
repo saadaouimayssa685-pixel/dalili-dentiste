@@ -1,0 +1,170 @@
+{
+  "localities": [
+    {
+      "canonical_name": "Ariana",
+      "normalized_name": "ariana",
+      "arabic_name": "أريانة",
+      "governorate": "Ariana",
+      "delegation": "Ariana Ville",
+      "postal_code": "2080",
+      "latitude": 36.8625,
+      "longitude": 10.1956,
+      "aliases": ["Ariana", "Aryana", "L'Ariana", "اريانة", "أريانة", "Ariana Ville"]
+    },
+    {
+      "canonical_name": "La Marsa",
+      "normalized_name": "la marsa",
+      "arabic_name": "المرسى",
+      "governorate": "Tunis",
+      "delegation": "La Marsa",
+      "postal_code": "2070",
+      "latitude": 36.8782,
+      "longitude": 10.3247,
+      "aliases": ["La Marsa", "Marsa", "El Marsa", "Al Marsa", "المرسى", "مرسى"]
+    },
+    {
+      "canonical_name": "Sidi Bou Said",
+      "normalized_name": "sidi bou said",
+      "arabic_name": "سيدي بوسعيد",
+      "governorate": "Tunis",
+      "delegation": "Carthage",
+      "postal_code": "2026",
+      "latitude": 36.8703,
+      "longitude": 10.3419,
+      "aliases": ["Sidi Bou Said", "Sidi Bou Saïd", "Sidi Bousaid", "Sidi Bou Saeed", "سيدي بوسعيد"]
+    },
+    {
+      "canonical_name": "Tunis Centre",
+      "normalized_name": "tunis centre",
+      "arabic_name": "وسط تونس",
+      "governorate": "Tunis",
+      "delegation": "Tunis",
+      "postal_code": "1000",
+      "latitude": 36.8065,
+      "longitude": 10.1815,
+      "aliases": ["Tunis Centre", "Centre Tunis", "Tunis Ville"]
+    },
+    {
+      "canonical_name": "Centre Ville",
+      "normalized_name": "centre ville",
+      "arabic_name": "وسط المدينة",
+      "governorate": null,
+      "delegation": null,
+      "postal_code": null,
+      "latitude": null,
+      "longitude": null,
+      "aliases": ["Centre Ville", "Centre-ville", "Downtown", "City Center", "وسط المدينة"],
+      "is_ambiguous": true
+    },
+    {
+      "canonical_name": "Lac 1",
+      "normalized_name": "lac 1",
+      "arabic_name": "البحيرة 1",
+      "governorate": "Tunis",
+      "delegation": "Tunis",
+      "postal_code": "1053",
+      "latitude": 36.8388,
+      "longitude": 10.2416,
+      "aliases": ["Lac 1", "Les Berges du Lac 1", "Berges du Lac", "Lac Tunis"]
+    },
+    {
+      "canonical_name": "El Manar",
+      "normalized_name": "el manar",
+      "arabic_name": "المنار",
+      "governorate": "Tunis",
+      "delegation": "El Menzah",
+      "postal_code": "2092",
+      "latitude": 36.8372,
+      "longitude": 10.1518,
+      "aliases": ["El Manar", "Manar", "Al Manar", "المنار"]
+    },
+    {
+      "canonical_name": "Aouina",
+      "normalized_name": "aouina",
+      "arabic_name": "العوينة",
+      "governorate": "Tunis",
+      "delegation": "La Marsa",
+      "postal_code": "2045",
+      "latitude": 36.8511,
+      "longitude": 10.2565,
+      "aliases": ["Aouina", "L'Aouina", "El Aouina", "العوينة"]
+    },
+    {
+      "canonical_name": "Ennasr",
+      "normalized_name": "ennasr",
+      "arabic_name": "النصر",
+      "governorate": "Ariana",
+      "delegation": "Ariana Ville",
+      "postal_code": "2037",
+      "latitude": 36.8668,
+      "longitude": 10.1643,
+      "aliases": ["Ennasr", "Cite Ennasr", "Cité Ennasr", "Nasr", "النصر"]
+    },
+    {
+      "canonical_name": "Sousse",
+      "normalized_name": "sousse",
+      "arabic_name": "سوسة",
+      "governorate": "Sousse",
+      "delegation": "Sousse Ville",
+      "postal_code": "4000",
+      "latitude": 35.8256,
+      "longitude": 10.6369,
+      "aliases": ["Sousse", "Soussa", "Susah", "سوسة"]
+    },
+    {
+      "canonical_name": "Sfax",
+      "normalized_name": "sfax",
+      "arabic_name": "صفاقس",
+      "governorate": "Sfax",
+      "delegation": "Sfax Ville",
+      "postal_code": "3000",
+      "latitude": 34.7406,
+      "longitude": 10.7603,
+      "aliases": ["Sfax", "Safaqis", "صفاقس"]
+    },
+    {
+      "canonical_name": "Nabeul",
+      "normalized_name": "nabeul",
+      "arabic_name": "نابل",
+      "governorate": "Nabeul",
+      "delegation": "Nabeul",
+      "postal_code": "8000",
+      "latitude": 36.4513,
+      "longitude": 10.735,
+      "aliases": ["Nabeul", "Nabul", "نابل"]
+    },
+    {
+      "canonical_name": "Monastir",
+      "normalized_name": "monastir",
+      "arabic_name": "المنستير",
+      "governorate": "Monastir",
+      "delegation": "Monastir",
+      "postal_code": "5000",
+      "latitude": 35.7643,
+      "longitude": 10.8113,
+      "aliases": ["Monastir", "Mestir", "المنستير"]
+    },
+    {
+      "canonical_name": "Kebili Nord",
+      "normalized_name": "kebili nord",
+      "arabic_name": "قبلي الشمالية",
+      "governorate": "Kébili",
+      "delegation": "Kébili Nord",
+      "postal_code": "4200",
+      "latitude": 33.7044,
+      "longitude": 8.969,
+      "aliases": ["Kebili Nord", "Kébili Nord", "Qibili Nord", "قبلي الشمالية"]
+    },
+    {
+      "canonical_name": "Medenine",
+      "normalized_name": "medenine",
+      "arabic_name": "مدنين",
+      "governorate": "Médenine",
+      "delegation": "Médenine Nord",
+      "postal_code": "4100",
+      "latitude": 33.3549,
+      "longitude": 10.5055,
+      "aliases": ["Medenine", "Médenine", "Medenin", "مدنين"]
+    }
+  ]
+}

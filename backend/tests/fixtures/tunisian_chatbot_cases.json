@@ -1,0 +1,35 @@
+[
+  {
+    "message": "Je cherche un orthodontiste à Ariana",
+    "intent": "search_dentist",
+    "language": "fr",
+    "specialty": "orthodontie",
+    "governorate": "Ariana"
+  },
+  {
+    "message": "نحب نلقى orthodontiste في أريانة",
+    "intent": "search_dentist",
+    "language": "tn_ar",
+    "specialty": "orthodontie",
+    "governorate": "Ariana"
+  },
+  {
+    "message": "n7eb nal9a orthodontiste fi Ariana",
+    "intent": "search_dentist",
+    "language": "tn_lat",
+    "specialty": "orthodontie",
+    "governorate": "Ariana"
+  },
+  {
+    "message": "dentiste mta3 sghar fi Sfax",
+    "intent": "search_dentist",
+    "language": "tn_lat",
+    "specialty": "pédodontie",
+    "governorate": "Sfax"
+  },
+  {
+    "message": "wajhi nafekh barcha w ma najamch netnaffes",
+    "intent": "medical_emergency",
+    "language": "tn_lat"
+  }
+]

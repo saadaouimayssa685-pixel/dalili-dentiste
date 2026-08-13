@@ -1,0 +1,144 @@
+base_url: "https://www.med.tn"
+
+profession:
+  slug: "dentiste"
+  country: "tunisie"
+
+request:
+  timeout_seconds: 30
+  max_retries: 3
+  delay_min_seconds: 1.5
+  delay_max_seconds: 3.5
+  user_agent: "DentistsTunisiaResearchBot/1.0 (+public professional data research; respectful low-rate crawler)"
+
+selectors:
+  profile_url_regex: "/medecin/dentiste/.+\\.html$"
+  pagination_links:
+    - "a[rel='next']"
+    - "a.next"
+    - "ul.pagination a"
+    - "a.btn-viewmore"
+  profile_root: "[itemscope][itemtype*='Physician'], body"
+  contact_box: ".profile__box"
+  headings: "h1,h2,h3"
+
+fallbacks:
+  html_enabled: true
+
+governorates:
+  - name: "Tunis"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/tunis"
+    api_listing:
+      method: "POST"
+      url: "https://www.med.tn/pagesmd_load.php"
+      page_size: 30
+      total_hint: 72
+      data:
+        spe: "29"
+        gov: "23"
+        del: ""
+        grandtunis: "0"
+        nearest: "0"
+        speciality: "Dentiste"
+        arract: ""
+        city_country: "tn"
+        geo_country: ""
+        proximity: "0"
+        sponsor: ""
+        act_id: ""
+        nbMainList: "72"
+        is_medinter: "0"
+  - name: "Ariana"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/ariana"
+  - name: "Ben Arous"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/ben-arous"
+  - name: "Manouba"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/mannouba"
+  - name: "Nabeul"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/nabeul"
+  - name: "Sousse"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/sousse"
+  - name: "Monastir"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/monastir"
+  - name: "Mahdia"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/mahdia"
+  - name: "Sfax"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/sfax"
+  - name: "Bizerte"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/bizerte"
+  - name: "Béja"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/beja"
+  - name: "Jendouba"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/jendouba"
+  - name: "Le Kef"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/le-kef"
+  - name: "Siliana"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/siliana"
+  - name: "Zaghouan"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/zaghouan"
+  - name: "Kairouan"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/kairouan"
+  - name: "Kasserine"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/kasserine"
+  - name: "Sidi Bouzid"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/sidi-bouzid"
+  - name: "Gabès"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/gabes"
+  - name: "Médenine"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/medenine"
+  - name: "Tataouine"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/tataouine"
+  - name: "Gafsa"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/gafsa"
+  - name: "Tozeur"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/tozeur"
+  - name: "Kébili"
+    enabled: true
+    listing_urls:
+      - "https://www.med.tn/medecin/dentiste/kebili"
