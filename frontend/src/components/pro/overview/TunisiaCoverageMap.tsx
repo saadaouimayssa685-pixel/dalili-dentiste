@@ -38,7 +38,6 @@ const POSITIONS: Record<string, { x: number; y: number }> = {
 export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] }) {
   const max = Math.max(...data.map((d) => d.dentists), 1);
   const covered = Math.min(24, data.filter((d) => d.dentists > 0).length);
-  const top = [...data].sort((a, b) => b.dentists - a.dentists).slice(0, 6);
 
   return (
     <ChartCard
@@ -50,8 +49,7 @@ export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] })
         </span>
       }
     >
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_230px]">
-        <div className="relative h-[330px] overflow-hidden rounded-[1.7rem] border border-border bg-[radial-gradient(circle_at_78%_18%,rgba(18,103,216,0.14),transparent_28%),linear-gradient(135deg,#fbfdff,#eaf8fb)]">
+      <div className="relative h-[330px] overflow-hidden rounded-[1.7rem] border border-border bg-[radial-gradient(circle_at_78%_18%,rgba(18,103,216,0.14),transparent_28%),linear-gradient(135deg,#fbfdff,#eaf8fb)]">
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,26,69,0.035)_1px,transparent_1px),linear-gradient(rgba(7,26,69,0.035)_1px,transparent_1px)] bg-[size:28px_28px]" />
           <div
             className="absolute left-[23%] top-[7%] h-[86%] w-[50%] rotate-[-8deg] rounded-[40%_60%_54%_46%/18%_20%_80%_82%] border border-turquoise/20 bg-white/78 shadow-[inset_0_0_75px_rgba(20,160,170,0.08)]"
@@ -83,28 +81,6 @@ export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] })
               </button>
             );
           })}
-        </div>
-
-        <aside className="rounded-3xl border border-border bg-soft/70 p-4">
-          <p className="text-xs font-black uppercase tracking-wide text-muted-foreground">Zones les plus denses</p>
-          <div className="mt-3 space-y-2">
-            {top.map((g, index) => {
-              const width = `${Math.max(8, (g.dentists / max) * 100)}%`;
-              return (
-                <div key={g.name} className="rounded-2xl bg-white/85 p-3">
-                  <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="font-black text-primary">#{index + 1}</span>
-                    <span className="font-bold text-turquoise">{formatNumber(g.dentists)}</span>
-                  </div>
-                  <p className="mt-1 truncate font-black text-navy">{g.name}</p>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-soft-2">
-                    <div className="h-full rounded-full bg-gradient-to-r from-turquoise to-primary" style={{ width }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </aside>
       </div>
     </ChartCard>
   );
