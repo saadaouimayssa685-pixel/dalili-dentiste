@@ -1,4 +1,4 @@
-import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { ChartCard } from "./ChartCard";
 import { formatNumber, type OverviewData } from "@/lib/overview-data";
@@ -52,6 +52,12 @@ export function TopGovernoratesChart({ data }: { data: OverviewData["topGovernor
                   fillOpacity={0.35 + 0.65 * (d.dentists / max)}
                 />
               ))}
+              <LabelList
+                dataKey="dentists"
+                position="right"
+                formatter={(value: number) => formatNumber(value)}
+                className="fill-navy text-xs font-black"
+              />
             </Bar>
           </BarChart>
         </ResponsiveContainer>

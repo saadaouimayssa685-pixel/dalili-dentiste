@@ -59,12 +59,13 @@ export function SpecialityDonutChart({ data }: { data: OverviewData["specialitie
           {top.map((item, index) => {
             const pct = total ? Math.round((item.value / total) * 100) : 0;
             return (
-              <div key={item.name} className="flex items-center gap-3">
+              <div key={item.name} className="rounded-2xl bg-soft/55 p-3">
+                <div className="flex items-center gap-3">
                 <span className="size-3 rounded-full" style={{ background: COLORS[index % COLORS.length] }} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="truncate font-bold text-navy">{item.name}</span>
-                    <span className="font-black text-turquoise">{pct}%</span>
+                    <span className="font-bold text-navy">{item.name}</span>
+                    <span className="shrink-0 font-black text-turquoise">{pct}%</span>
                   </div>
                   <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-soft-2">
                     <div
@@ -72,6 +73,10 @@ export function SpecialityDonutChart({ data }: { data: OverviewData["specialitie
                       style={{ width: `${Math.max(2, pct)}%` }}
                     />
                   </div>
+                  <p className="mt-1 text-xs font-semibold text-muted-foreground">
+                    {formatNumber(item.value)} mentions
+                  </p>
+                </div>
                 </div>
               </div>
             );
