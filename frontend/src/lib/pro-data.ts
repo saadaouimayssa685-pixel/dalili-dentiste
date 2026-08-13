@@ -124,9 +124,8 @@ export function downloadCsv(filename: string, content: string) {
 }
 
 export function sourceExportUrl(sourceId: string, format: "csv" | "xlsx") {
-  const apiBase =
-    (import.meta.env["VITE_FASTAPI_BASE_URL"] as string | undefined) || "http://127.0.0.1:8000";
-  const url = new URL("/api/exports/source", apiBase.replace(/\/+$/, ""));
+  const apiBase = typeof window === "undefined" ? "http://127.0.0.1:8000" : window.location.origin;
+  const url = new URL("/api/exports/source", apiBase);
   url.searchParams.set("source", sourceId);
   url.searchParams.set("format", format);
   return url.toString();

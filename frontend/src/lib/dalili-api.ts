@@ -116,9 +116,7 @@ async function request<T>(
   init?: RequestInit & { params?: Record<string, string | number | undefined> },
 ): Promise<T> {
   if (typeof window === "undefined") throw new ApiError("Requête côté serveur ignorée", 0);
-  const apiBase =
-    (import.meta.env["VITE_FASTAPI_BASE_URL"] as string | undefined) || "http://127.0.0.1:8000";
-  const url = new URL(path, apiBase.replace(/\/+$/, ""));
+  const url = new URL(path, window.location.origin);
   for (const [k, v] of Object.entries(init?.params ?? {})) {
     if (v !== undefined && v !== "" && v !== "all") url.searchParams.set(k, String(v));
   }
