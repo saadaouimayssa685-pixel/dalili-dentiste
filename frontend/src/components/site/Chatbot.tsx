@@ -1,4 +1,4 @@
-import { MessagesSquare, X } from "lucide-react";
+import { MessagesSquare, ScanLine, X } from "lucide-react";
 
 import { AssistantThread } from "@/components/public/AssistantThread";
 import { setAssistantOpen, useAssistant } from "@/lib/assistant-store";
@@ -30,7 +30,21 @@ export function Chatbot() {
         </div>
       ) : null}
 
-      <div className="group relative flex items-center">
+      <div className="flex items-center gap-3">
+        <div className="group relative flex items-center">
+          <span className="pointer-events-none absolute right-14 whitespace-nowrap rounded-full bg-navy px-3 py-1.5 text-xs font-semibold text-navy-foreground opacity-0 shadow-[var(--shadow-card)] transition-opacity group-hover:opacity-100">
+            Scanner une carte
+          </span>
+          <a
+            href="/professional#scan"
+            aria-label="Scanner une carte"
+            title="Scanner une carte"
+            className="grid size-12 place-items-center rounded-full bg-white text-turquoise shadow-[var(--shadow-lift)] ring-4 ring-turquoise/10 transition-transform hover:scale-105"
+          >
+            <ScanLine className="size-5" />
+          </a>
+        </div>
+        <div className="group relative flex items-center">
         <span className="pointer-events-none absolute right-16 whitespace-nowrap rounded-full bg-navy px-3 py-1.5 text-xs font-semibold text-navy-foreground opacity-0 shadow-[var(--shadow-card)] transition-opacity group-hover:opacity-100">
           Assistant Dalili
         </span>
@@ -42,6 +56,7 @@ export function Chatbot() {
         >
           {open ? <X className="size-6" /> : <MessagesSquare className="size-6" />}
         </button>
+        </div>
       </div>
     </div>
   );

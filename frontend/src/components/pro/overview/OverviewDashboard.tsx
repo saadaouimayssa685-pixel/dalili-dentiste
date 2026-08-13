@@ -58,10 +58,10 @@ export function OverviewDashboard() {
       <header className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
         <div>
           <h2 className="text-2xl font-black tracking-tight text-navy sm:text-3xl">
-            Tableau de bord national des dentistes en Tunisie
+            Tableau de bord Dalili Dentiste Tounsi
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Vue d'ensemble de la couverture nationale, des sources et de la qualite des donnees.
+            Vue d'ensemble des donnees collectees, des sources et de la qualite des fiches.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">

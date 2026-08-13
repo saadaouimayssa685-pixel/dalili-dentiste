@@ -16,8 +16,8 @@ const SPECIALITY_REFERENCE = [
 export function SpecialityDonutChart(_props: { data: OverviewData["specialities"] }) {
   return (
     <ChartCard title="Specialites en Tunisie">
-      <div className="grid min-h-[220px] gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-center">
-        <div className="relative h-[210px] w-full">
+      <div className="grid min-h-[220px] gap-4 lg:grid-cols-[220px_minmax(220px,1fr)] lg:items-center">
+        <div className="relative h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -54,10 +54,10 @@ export function SpecialityDonutChart(_props: { data: OverviewData["specialities"
         </div>
         <div className="space-y-2">
           {SPECIALITY_REFERENCE.map((item) => (
-            <div key={item.name} className="grid grid-cols-[minmax(0,1fr)_46px] items-center gap-3">
+            <div key={item.name} className="grid grid-cols-[minmax(0,1fr)_48px] items-center gap-3">
               <div className="flex min-w-0 items-center gap-2">
                 <span className="size-2.5 shrink-0 rounded-full" style={{ background: item.color }} />
-                <span className="truncate text-xs font-semibold text-navy">{item.name}</span>
+                <span className="text-[11px] font-semibold leading-4 text-navy">{item.name}</span>
               </div>
               <span className="text-right text-xs font-black text-muted-foreground">{item.value.toFixed(1)}%</span>
             </div>

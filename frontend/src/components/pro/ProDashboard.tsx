@@ -25,7 +25,7 @@ import {
   UserRoundCheck,
   Users,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import clinicImage from "@/assets/professional/professional-dashboard-clinic.webp";
 import { TunisiaCoverageMap } from "@/components/pro/overview/TunisiaCoverageMap";
@@ -70,11 +70,6 @@ const NAV = [
 type SectionId = (typeof NAV)[number]["id"];
 
 const MAIN_NAV = NAV.slice(0, 8);
-const QUICK_NAV = [
-  { id: "scan", label: "Scan carte", icon: ScanLine },
-  { id: "downloads", label: "Base consolidée", icon: FileSpreadsheet },
-  { id: "map", label: "Cartographie", icon: MapIcon },
-] as const;
 
 const KPIS = [
   { icon: UserRoundCheck, label: "Dentistes uniques", value: "4 095" },
@@ -268,6 +263,12 @@ export function ProDashboard() {
   });
   const overviewData = useMemo(() => getOverviewData(), []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash.replace("#", "");
+    if (NAV.some((item) => item.id === hash)) setSection(hash as SectionId);
+  }, []);
+
   const results = useMemo(
     () =>
       DENTISTS.filter(
@@ -309,25 +310,6 @@ export function ProDashboard() {
                 );
               })}
             </nav>
-            <p className="mt-5 px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Actions rapides
-            </p>
-            <div className="mt-2 flex min-w-0 max-w-full gap-1.5 overflow-x-auto lg:flex-col lg:overflow-visible">
-              {QUICK_NAV.map((q) => (
-                <button
-                  key={q.label}
-                  onClick={() => setSection(q.id)}
-                  className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors lg:w-full ${
-                    q.id === section
-                      ? "bg-turquoise/15 text-navy"
-                      : "text-muted-foreground hover:bg-soft hover:text-navy"
-                  }`}
-                >
-                  <q.icon className="size-[18px] shrink-0 text-turquoise" />
-                  <span className="whitespace-nowrap">{q.label}</span>
-                </button>
-              ))}
-            </div>
           </div>
         </aside>
 
