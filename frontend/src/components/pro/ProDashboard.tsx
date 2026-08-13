@@ -27,14 +27,15 @@ import { useEffect, useMemo, useState } from "react";
 import clinicImage from "@/assets/professional/professional-dashboard-clinic.webp";
 import { TunisiaCoverageMap } from "@/components/pro/overview/TunisiaCoverageMap";
 import { OverviewDashboard } from "@/components/pro/overview/OverviewDashboard";
-import { ScanCard } from "@/components/site/ScanCard";
+import { BusinessCardScanner } from "@/components/public/BusinessCardScanner";
 import { SearchEngine, type Filters } from "@/components/site/SearchEngine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { DENTISTS, GOUVERNORATS, VILLES } from "@/lib/dalili-data";
+import { DENTISTS, GOUVERNORATS, SPECIALITES, VILLES } from "@/lib/dalili-data";
+import type { ScanFields } from "@/lib/dalili-api";
 import { getOverviewData } from "@/lib/overview-data";
 import {
   DENTIST_SOURCES,
@@ -271,6 +272,20 @@ export function ProDashboard() {
   );
 
   const current = NAV.find((n) => n.id === section)!;
+
+  function applyScanFields(fields: ScanFields) {
+    const text = [fields.address, fields.localite].filter(Boolean).join(" ").toLowerCase();
+    const gouvernorat =
+      GOUVERNORATS.find((g) => text.includes(g.toLowerCase())) ?? filters.gouvernorat;
+    const villes = gouvernorat === "all" ? [] : (VILLES[gouvernorat] ?? []);
+    const ville = villes.find((v) => text.includes(v.toLowerCase())) ?? "all";
+    const specialityText = fields.speciality.toLowerCase();
+    const speciality =
+      SPECIALITES.find((s) => specialityText.includes(s.toLowerCase())) ?? filters.speciality;
+
+    setFilters({ gouvernorat, ville, speciality });
+    setSection("dentists");
+  }
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -667,7 +682,7 @@ export function ProDashboard() {
 
           {section === "scan" ? (
             <div className="grid gap-5 lg:grid-cols-[1fr_0.9fr]">
-              <ScanCard />
+              <BusinessCardScanner onSearchFields={applyScanFields} />
               <Panel
                 title="Lecture intelligente"
                 description="Le module OCR transforme une carte visite en proposition exploitable."
