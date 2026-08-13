@@ -1,7 +1,6 @@
 import { CheckCircle2, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { DashboardFilters } from "./DashboardFilters";
 import { DashboardKpiCards } from "./DashboardKpiCards";
 import { DataQualityPanel } from "./DataQualityPanel";
 import { MonthlyTrendChart } from "./MonthlyTrendChart";
@@ -12,10 +11,9 @@ import { TopLocalitiesTable } from "./TopLocalitiesTable";
 import { TunisiaCoverageMap } from "./TunisiaCoverageMap";
 import { Button } from "@/components/ui/button";
 import { fetchOverview } from "@/lib/dalili-api";
-import { OVERVIEW_DEFAULT_FILTERS, type OverviewFilters } from "@/lib/overview-data";
+import { OVERVIEW_DEFAULT_FILTERS } from "@/lib/overview-data";
 
 export function OverviewDashboard() {
-  const [filters, setFilters] = useState<OverviewFilters>(OVERVIEW_DEFAULT_FILTERS);
   const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
   const [data, setData] = useState<Awaited<ReturnType<typeof fetchOverview>> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,9 +24,9 @@ export function OverviewDashboard() {
     setLoading(true);
     setError(null);
     fetchOverview({
-      gouvernorat: filters.gouvernorat,
-      speciality: filters.speciality,
-      source: filters.source,
+      gouvernorat: OVERVIEW_DEFAULT_FILTERS.gouvernorat,
+      speciality: OVERVIEW_DEFAULT_FILTERS.speciality,
+      source: OVERVIEW_DEFAULT_FILTERS.source,
     })
       .then((result) => active && setData(result))
       .catch((reason: unknown) => {
@@ -38,7 +36,7 @@ export function OverviewDashboard() {
     return () => {
       active = false;
     };
-  }, [filters.gouvernorat, filters.speciality, filters.source, refreshedAt]);
+  }, [refreshedAt]);
 
   return (
     <div className="space-y-6">
@@ -69,12 +67,7 @@ export function OverviewDashboard() {
         </div>
       </header>
 
-      <div className="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)]">
-        <div className="xl:sticky xl:top-24 xl:self-start">
-          <DashboardFilters filters={filters} onChange={setFilters} />
-        </div>
-
-        <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-6">
           {loading ? (
             <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
               Synchronisation avec la base SQL en cours...
@@ -101,7 +94,6 @@ export function OverviewDashboard() {
               </div>
             </>
           ) : null}
-        </div>
       </div>
     </div>
   );

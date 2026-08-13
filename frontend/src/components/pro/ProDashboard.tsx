@@ -8,7 +8,6 @@ import {
   FileSearch,
   Inbox,
   LayoutDashboard,
-  Lightbulb,
   MapPin,
   MapPinned,
   Map as MapIcon,
@@ -48,6 +47,7 @@ import {
   SOURCE_FEEDS,
   TELECHARGEMENTS,
   downloadCsv,
+  triggerDatasetExport,
   triggerSourceExport,
   toCsv,
   type SourceFeed,
@@ -57,7 +57,6 @@ const NAV = [
   { id: "overview", label: "Vue d'ensemble", icon: LayoutDashboard },
   { id: "dentists", label: "Dentistes", icon: UserRound },
   { id: "sources", label: "Sources de données", icon: Database },
-  { id: "propositions", label: "Propositions", icon: Lightbulb },
   { id: "quality", label: "Qualité des données", icon: ShieldCheck },
   { id: "duplicates", label: "Doublons", icon: Copy },
   { id: "localities", label: "Localités", icon: MapPin },
@@ -70,7 +69,7 @@ const NAV = [
 
 type SectionId = (typeof NAV)[number]["id"];
 
-const MAIN_NAV = NAV.slice(0, 9);
+const MAIN_NAV = NAV.slice(0, 8);
 const QUICK_NAV = [
   { id: "scan", label: "Scan carte", icon: ScanLine },
   { id: "downloads", label: "Base consolidée", icon: FileSpreadsheet },
@@ -145,20 +144,6 @@ function IconAction({
     </Tooltip>
   );
 }
-
-const PROPOSITIONS = [
-  { name: "Cabinet Dr. Nadia Jelassi", info: "Sousse · Msaken · Orthodontie", source: "med.tn" },
-  {
-    name: "Centre Dentaire El Manar",
-    info: "Tunis · El Manar · Généraliste",
-    source: "Tunisie Dentiste",
-  },
-  {
-    name: "Dr. Yassine Rekik",
-    info: "Sfax · Sakiet Ezzit · Implantologie",
-    source: "Tunisie Dentiste",
-  },
-];
 
 const STATS = [
   { icon: Users, label: "Cabinets référencés", value: "3 482", trend: "+128 ce mois" },
@@ -275,7 +260,6 @@ function ProActionHub({
 
 export function ProDashboard() {
   const [section, setSection] = useState<SectionId>("overview");
-  const [handled, setHandled] = useState<string[]>([]);
   const [preview, setPreview] = useState<SourceFeed | null>(null);
   const [filters, setFilters] = useState<Filters>({
     gouvernorat: "all",
@@ -418,15 +402,6 @@ export function ProDashboard() {
                   </div>
                 ))}
               </div>
-              <Panel
-                title="Recherche avancée"
-                description="Filtrez l'annuaire par localisation et spécialité."
-              >
-                <SearchEngine filters={filters} onChange={setFilters} />
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {results.length} cabinet(s) correspondant aux filtres.
-                </p>
-              </Panel>
             </>
           ) : null}
 
@@ -573,58 +548,6 @@ export function ProDashboard() {
                   </tbody>
                 </table>
               </div>
-            </Panel>
-          ) : null}
-
-          {section === "propositions" ? (
-            <Panel
-              title="Propositions de fiches"
-              description="Fiches détectées par nos sources, en attente de validation."
-            >
-              <ul className="space-y-3">
-                {PROPOSITIONS.map((p) => (
-                  <li
-                    key={p.name}
-                    className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-border bg-soft/50 p-4"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate font-semibold text-navy">{p.name}</p>
-                      <p className="truncate text-sm text-muted-foreground">{p.info}</p>
-                      <div className="mt-1">
-                        <SourceBadges sources={[p.source]} />
-                      </div>
-                    </div>
-                    {handled.includes(p.name) ? (
-                      <span className="shrink-0 text-xs font-semibold text-turquoise">Traité</span>
-                    ) : (
-                      <div className="flex shrink-0 gap-2">
-                        <Button
-                          size="sm"
-                          className="rounded-full bg-turquoise text-turquoise-foreground hover:opacity-90"
-                          onClick={() => setHandled((h) => [...h, p.name])}
-                        >
-                          Valider
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-full"
-                          onClick={() => setHandled((h) => [...h, p.name])}
-                        >
-                          Rejeter
-                        </Button>
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              {!PROPOSITIONS.length ? (
-                <EmptyState
-                  icon={Lightbulb}
-                  title="Aucune proposition"
-                  message="Aucune nouvelle fiche n'a été détectée par les sources pour le moment."
-                />
-              ) : null}
             </Panel>
           ) : null}
 
@@ -837,21 +760,7 @@ export function ProDashboard() {
                       size="sm"
                       variant="outline"
                       className="shrink-0 rounded-full"
-                      onClick={() =>
-                        downloadCsv(
-                          `${t.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-                          toCsv(
-                            ["Nom", "Spécialité", "Gouvernorat", "Ville", "Téléphone"],
-                            DENTISTS.map((d) => [
-                              d.name,
-                              d.speciality,
-                              d.gouvernorat,
-                              d.ville,
-                              d.phone,
-                            ]),
-                          ),
-                        )
-                      }
+                      onClick={() => triggerDatasetExport(t.kind, t.fileFormat)}
                     >
                       <Download className="size-4" /> Télécharger
                     </Button>

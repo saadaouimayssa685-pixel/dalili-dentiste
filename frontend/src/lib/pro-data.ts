@@ -38,7 +38,7 @@ export const SOURCE_FEEDS: SourceFeed[] = [
     sourceId: ["med.tn", "tunisie_dentiste", "tunisie_medicale"][i] ?? name.toLowerCase(),
     name,
     url: `https://www.${name.toLowerCase().replace(/[^a-z0-9]/g, "")}.tn`,
-    status: (i === 2 ? "En pause" : "Actif") as SourceFeed["status"],
+    status: "Actif" as SourceFeed["status"],
     updatedAt: ["04/08/2026 06:12", "03/08/2026 22:40", "28/07/2026 09:05"][i] ?? "04/08/2026",
     rows: [1842, 1176, 604][i] ?? 400,
     tier: "Principale" as const,
@@ -100,11 +100,49 @@ export const LOGS = [
   { time: "02/08/2026 08:31", level: "Info", message: "Scan carte : 12 fiches créées" },
 ];
 
-export const TELECHARGEMENTS = [
-  { name: "Annuaire complet", format: "XLSX", size: "2,4 Mo", updatedAt: "04/08/2026" },
-  { name: "Dentistes vérifiés", format: "XLSX", size: "1,1 Mo", updatedAt: "04/08/2026" },
-  { name: "Doublons détectés", format: "CSV", size: "180 Ko", updatedAt: "03/08/2026" },
-  { name: "Localités & gouvernorats", format: "CSV", size: "42 Ko", updatedAt: "01/08/2026" },
+export type DatasetExportKind = "complete" | "verified" | "duplicates" | "localities";
+export type DatasetExportFormat = "csv" | "xlsx";
+
+export const TELECHARGEMENTS: {
+  name: string;
+  format: string;
+  fileFormat: DatasetExportFormat;
+  kind: DatasetExportKind;
+  size: string;
+  updatedAt: string;
+}[] = [
+  {
+    name: "Annuaire complet",
+    format: "XLSX",
+    fileFormat: "xlsx",
+    kind: "complete",
+    size: "2,4 Mo",
+    updatedAt: "04/08/2026",
+  },
+  {
+    name: "Dentistes vérifiés",
+    format: "XLSX",
+    fileFormat: "xlsx",
+    kind: "verified",
+    size: "1,1 Mo",
+    updatedAt: "04/08/2026",
+  },
+  {
+    name: "Doublons détectés",
+    format: "CSV",
+    fileFormat: "csv",
+    kind: "duplicates",
+    size: "180 Ko",
+    updatedAt: "03/08/2026",
+  },
+  {
+    name: "Localités & gouvernorats",
+    format: "CSV",
+    fileFormat: "csv",
+    kind: "localities",
+    size: "42 Ko",
+    updatedAt: "01/08/2026",
+  },
 ];
 
 export function toCsv(columns: string[], rows: string[][]) {
@@ -134,6 +172,22 @@ export function sourceExportUrl(sourceId: string, format: "csv" | "xlsx") {
 export function triggerSourceExport(sourceId: string, format: "csv" | "xlsx") {
   const a = document.createElement("a");
   a.href = sourceExportUrl(sourceId, format);
+  a.target = "_blank";
+  a.rel = "noreferrer";
+  a.click();
+}
+
+export function datasetExportUrl(kind: DatasetExportKind, format: DatasetExportFormat) {
+  const apiBase = typeof window === "undefined" ? "http://127.0.0.1:8000" : window.location.origin;
+  const url = new URL("/api/exports/dataset", apiBase);
+  url.searchParams.set("kind", kind);
+  url.searchParams.set("format", format);
+  return url.toString();
+}
+
+export function triggerDatasetExport(kind: DatasetExportKind, format: DatasetExportFormat) {
+  const a = document.createElement("a");
+  a.href = datasetExportUrl(kind, format);
   a.target = "_blank";
   a.rel = "noreferrer";
   a.click();

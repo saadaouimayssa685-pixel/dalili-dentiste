@@ -358,6 +358,142 @@ def export_source_data(
     )
 
 
+@app.get("/api/exports/dataset")
+def export_dataset(
+    kind: str = Query("complete", pattern="^(complete|verified|duplicates|localities)$"),
+    format: str = Query("csv", pattern="^(csv|xlsx)$"),
+) -> StreamingResponse:
+    columns_sql = """
+        id,
+        full_name,
+        title,
+        specialties,
+        governorate,
+        delegation,
+        locality,
+        address,
+        phone,
+        google_maps_url,
+        latitude,
+        longitude,
+        sources,
+        source_count,
+        quality_score,
+        quality_status,
+        updated_at
+    """
+
+    with SessionLocal() as session:
+        if kind == "localities":
+            rows = session.execute(
+                text(
+                    """
+                    SELECT
+                        COALESCE(governorate, '') AS governorate,
+                        COALESCE(delegation, '') AS delegation,
+                        COALESCE(locality, '') AS locality,
+                        COUNT(*) AS dentists,
+                        SUM(CASE WHEN phone IS NOT NULL AND TRIM(phone) != '' THEN 1 ELSE 0 END) AS with_phone,
+                        SUM(CASE WHEN latitude IS NOT NULL AND longitude IS NOT NULL THEN 1 ELSE 0 END) AS geocoded
+                    FROM dentists_clean
+                    WHERE
+                        COALESCE(governorate, '') != ''
+                        OR COALESCE(delegation, '') != ''
+                        OR COALESCE(locality, '') != ''
+                    GROUP BY governorate, delegation, locality
+                    ORDER BY governorate, delegation, locality
+                    """
+                )
+            ).mappings().all()
+            export_rows = [
+                {
+                    "Gouvernorat": row.get("governorate"),
+                    "Delegation": row.get("delegation"),
+                    "Localite": row.get("locality"),
+                    "Dentistes": row.get("dentists"),
+                    "Avec telephone": row.get("with_phone"),
+                    "Geocodes": row.get("geocoded"),
+                }
+                for row in rows
+            ]
+        else:
+            where_sql = ""
+            if kind == "verified":
+                where_sql = """
+                    WHERE
+                        quality_score >= 70
+                        AND full_name IS NOT NULL
+                        AND TRIM(full_name) != ''
+                        AND phone IS NOT NULL
+                        AND TRIM(phone) != ''
+                """
+            elif kind == "duplicates":
+                where_sql = "WHERE source_count > 1"
+
+            rows = session.execute(
+                text(
+                    f"""
+                    SELECT {columns_sql}
+                    FROM dentists_clean
+                    {where_sql}
+                    ORDER BY governorate, locality, full_name
+                    """
+                )
+            ).mappings().all()
+            export_rows = [
+                {
+                    "ID": row.get("id"),
+                    "Nom complet": row.get("full_name"),
+                    "Titre": row.get("title"),
+                    "Specialites": ", ".join(_json_list(row.get("specialties"))),
+                    "Gouvernorat": row.get("governorate"),
+                    "Delegation": row.get("delegation"),
+                    "Localite": row.get("locality"),
+                    "Adresse": row.get("address"),
+                    "Telephone": row.get("phone"),
+                    "Google Maps": row.get("google_maps_url"),
+                    "Latitude": row.get("latitude"),
+                    "Longitude": row.get("longitude"),
+                    "Sources": row.get("sources"),
+                    "Nombre de sources": row.get("source_count"),
+                    "Score qualite": row.get("quality_score"),
+                    "Statut qualite": row.get("quality_status"),
+                    "Mise a jour": row.get("updated_at"),
+                }
+                for row in rows
+            ]
+
+    if not export_rows:
+        raise HTTPException(status_code=404, detail="Aucune donnee trouvee pour cet export.")
+
+    safe_names = {
+        "complete": "annuaire-complet",
+        "verified": "dentistes-verifies",
+        "duplicates": "doublons-detectes",
+        "localities": "localites-gouvernorats",
+    }
+    safe_name = safe_names[kind]
+    dataframe = pd.DataFrame(export_rows)
+
+    if format == "xlsx":
+        buffer = io.BytesIO()
+        with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
+            dataframe.to_excel(writer, index=False, sheet_name="export")
+        buffer.seek(0)
+        return StreamingResponse(
+            buffer,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f'attachment; filename="{safe_name}.xlsx"'},
+        )
+
+    csv_data = dataframe.to_csv(index=False, sep=";", encoding="utf-8-sig")
+    return StreamingResponse(
+        io.BytesIO(csv_data.encode("utf-8-sig")),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{safe_name}.csv"'},
+    )
+
+
 @app.get("/api/scan-card/status")
 def scan_status() -> dict[str, Any]:
     return {"available": paddleocr_available(), "engine": "PaddleOCR", "languages": ["fr", "en", "arabic"]}
