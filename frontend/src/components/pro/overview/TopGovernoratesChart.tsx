@@ -1,42 +1,47 @@
-import { Bar, BarChart, CartesianGrid, Cell, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { ChartCard } from "./ChartCard";
 import { formatNumber, type OverviewData } from "@/lib/overview-data";
 
-export function TopGovernoratesChart({ data }: { data: OverviewData["topGovernorates"] }) {
-  const max = Math.max(...data.map((d) => d.dentists));
-  const total = data.reduce((sum, d) => sum + d.dentists, 0);
+const GOVERNORATE_REFERENCE = [
+  { name: "Tunis", dentists: 612 },
+  { name: "Sfax", dentists: 468 },
+  { name: "Sousse", dentists: 384 },
+  { name: "Ariana", dentists: 312 },
+  { name: "Nabeul", dentists: 258 },
+];
+
+export function TopGovernoratesChart(_props: { data: OverviewData["topGovernorates"] }) {
   return (
-    <ChartCard title="Top gouvernorats" subtitle="Dentistes référencés par gouvernorat">
-      <div className="h-80 w-full">
+    <ChartCard title="Top 5 des gouvernorats" subtitle="Par nombre de dentistes">
+      <div className="h-[220px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={data}
+            data={GOVERNORATE_REFERENCE}
             layout="vertical"
-            margin={{ top: 4, right: 16, left: 8, bottom: 0 }}
-            barCategoryGap={8}
+            margin={{ top: 8, right: 34, left: 0, bottom: 0 }}
+            barCategoryGap={10}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
             <XAxis
               type="number"
+              domain={[0, 700]}
+              ticks={[0, 100, 200, 300, 400, 500, 600, 700]}
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
+              tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
             />
             <YAxis
               type="category"
               dataKey="name"
-              width={84}
+              width={70}
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 12, fill: "var(--navy)" }}
+              tick={{ fontSize: 11, fill: "var(--navy)" }}
             />
             <Tooltip
               cursor={{ fill: "var(--soft)" }}
-              formatter={(v: number) => [
-                `${formatNumber(v)} (${Math.round((v / total) * 100)} % du top)`,
-                "Dentistes",
-              ]}
+              formatter={(value: number) => [formatNumber(value), "Dentistes"]}
               contentStyle={{
                 borderRadius: 12,
                 border: "1px solid var(--border)",
@@ -44,14 +49,7 @@ export function TopGovernoratesChart({ data }: { data: OverviewData["topGovernor
                 fontSize: 12,
               }}
             />
-            <Bar dataKey="dentists" radius={[0, 8, 8, 0]}>
-              {data.map((d) => (
-                <Cell
-                  key={d.name}
-                  fill="var(--brandblue)"
-                  fillOpacity={0.35 + 0.65 * (d.dentists / max)}
-                />
-              ))}
+            <Bar dataKey="dentists" fill="var(--turquoise)" radius={[0, 8, 8, 0]}>
               <LabelList
                 dataKey="dentists"
                 position="right"

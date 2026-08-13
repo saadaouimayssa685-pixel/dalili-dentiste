@@ -101,11 +101,11 @@ export function OverviewDashboard() {
         ) : data ? (
           <>
             <DashboardKpiCards kpis={data.kpis} />
-            <div className="grid gap-3 xl:grid-cols-[minmax(0,1.05fr)_minmax(430px,0.95fr)]">
+            <div className="grid gap-3 xl:grid-cols-2">
               <MonthlyTrendChart data={data.monthly} />
               <SpecialityDonutChart data={data.specialities} />
             </div>
-            <div className="grid gap-3 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+            <div className="grid gap-3 xl:grid-cols-2">
               <TopGovernoratesChart data={data.topGovernorates.slice(0, 5)} />
               <SourcesStackedChart data={data.sources} />
             </div>
