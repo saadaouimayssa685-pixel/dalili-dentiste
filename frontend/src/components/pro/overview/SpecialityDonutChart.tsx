@@ -18,15 +18,15 @@ export function SpecialityDonutChart({ data }: { data: OverviewData["specialitie
 
   return (
     <ChartCard title="Specialites en Tunisie" subtitle={`${formatNumber(total)} mentions consolidees`}>
-      <div className="grid gap-4 md:grid-cols-[220px_minmax(0,1fr)] md:items-center">
-        <div className="relative h-60 w-full">
+      <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-center">
+        <div className="relative h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={top}
                 dataKey="value"
                 nameKey="name"
-                innerRadius="62%"
+                innerRadius="60%"
                 outerRadius="88%"
                 paddingAngle={2}
                 stroke="var(--card)"
@@ -51,32 +51,32 @@ export function SpecialityDonutChart({ data }: { data: OverviewData["specialitie
             </PieChart>
           </ResponsiveContainer>
           <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
-            <p className="text-2xl font-black text-navy">{formatNumber(total)}</p>
-            <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">mentions</p>
+            <div>
+              <p className="text-3xl font-black text-navy">{formatNumber(total)}</p>
+              <p className="text-xs font-semibold text-muted-foreground">Total</p>
+            </div>
           </div>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {top.map((item, index) => {
             const pct = total ? Math.round((item.value / total) * 100) : 0;
             return (
-              <div key={item.name} className="rounded-2xl bg-soft/55 p-3">
-                <div className="flex items-center gap-3">
-                <span className="size-3 rounded-full" style={{ background: COLORS[index % COLORS.length] }} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-bold text-navy">{item.name}</span>
-                    <span className="shrink-0 font-black text-turquoise">{pct}%</span>
+              <div key={item.name} className="grid grid-cols-[minmax(0,1fr)_56px] items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="size-2.5 rounded-full" style={{ background: COLORS[index % COLORS.length] }} />
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-bold text-navy">{item.name}</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground">{formatNumber(item.value)} mentions</p>
                   </div>
+                </div>
+                <div>
+                  <p className="text-right text-xs font-black text-turquoise">{pct}%</p>
                   <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-soft-2">
                     <div
                       className="h-full rounded-full bg-current text-turquoise"
                       style={{ width: `${Math.max(2, pct)}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-xs font-semibold text-muted-foreground">
-                    {formatNumber(item.value)} mentions
-                  </p>
-                </div>
                 </div>
               </div>
             );

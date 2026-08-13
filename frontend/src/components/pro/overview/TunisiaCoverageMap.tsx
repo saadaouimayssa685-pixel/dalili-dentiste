@@ -42,7 +42,7 @@ export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] })
 
   return (
     <ChartCard
-      title="Carte de couverture nationale"
+      title="Repartition geographique des dentistes par gouvernorat"
       subtitle={`Couverture officielle : ${covered}/24 gouvernorats (${Math.round((covered / 24) * 100)} %)`}
       action={
         <span className="inline-flex items-center gap-1.5 rounded-full bg-turquoise/10 px-3 py-1 text-xs font-bold text-turquoise">
@@ -50,14 +50,14 @@ export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] })
         </span>
       }
     >
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_240px]">
-        <div className="relative h-[500px] overflow-hidden rounded-[2rem] border border-border bg-[radial-gradient(circle_at_80%_12%,rgba(18,103,216,0.14),transparent_26%),linear-gradient(135deg,#f8fcff,#e5f8fb)]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_230px]">
+        <div className="relative h-[330px] overflow-hidden rounded-[1.7rem] border border-border bg-[radial-gradient(circle_at_78%_18%,rgba(18,103,216,0.14),transparent_28%),linear-gradient(135deg,#fbfdff,#eaf8fb)]">
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,26,69,0.035)_1px,transparent_1px),linear-gradient(rgba(7,26,69,0.035)_1px,transparent_1px)] bg-[size:28px_28px]" />
           <div
-            className="absolute left-[18%] top-[4%] h-[92%] w-[66%] rounded-[48%_52%_60%_40%/18%_20%_80%_82%] border border-turquoise/25 bg-white/80 shadow-[inset_0_0_80px_rgba(20,160,170,0.08)]"
+            className="absolute left-[23%] top-[7%] h-[86%] w-[50%] rotate-[-8deg] rounded-[40%_60%_54%_46%/18%_20%_80%_82%] border border-turquoise/20 bg-white/78 shadow-[inset_0_0_75px_rgba(20,160,170,0.08)]"
             aria-hidden="true"
           />
-          <div className="absolute left-6 top-6 rounded-2xl border border-white/80 bg-white/80 px-4 py-3 shadow-sm">
+          <div className="absolute bottom-5 left-5 rounded-2xl border border-white/80 bg-white/85 px-4 py-3 shadow-sm">
             <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Densite cabinets</p>
             <p className="mt-1 text-2xl font-black text-navy">{formatNumber(data.reduce((s, g) => s + g.dentists, 0))}</p>
           </div>
@@ -87,11 +87,11 @@ export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] })
 
         <aside className="rounded-3xl border border-border bg-soft/70 p-4">
           <p className="text-xs font-black uppercase tracking-wide text-muted-foreground">Zones les plus denses</p>
-          <div className="mt-4 space-y-3">
+          <div className="mt-3 space-y-2">
             {top.map((g, index) => {
               const width = `${Math.max(8, (g.dentists / max) * 100)}%`;
               return (
-                <div key={g.name} className="rounded-2xl bg-white/80 p-3">
+                <div key={g.name} className="rounded-2xl bg-white/85 p-3">
                   <div className="flex items-center justify-between gap-2 text-xs">
                     <span className="font-black text-primary">#{index + 1}</span>
                     <span className="font-bold text-turquoise">{formatNumber(g.dentists)}</span>

@@ -332,30 +332,32 @@ export function ProDashboard() {
         </aside>
 
         <main className="space-y-6">
-          <header className="relative overflow-hidden rounded-[20px] border border-border shadow-[var(--shadow-card)]">
-            <img
-              src={clinicImage}
-              alt="Cabinet dentaire moderne, lumineux et professionnel"
-              width={1600}
-              height={600}
-              loading="lazy"
-              className="h-40 w-full object-cover sm:h-52"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/10" />
-            <div className="absolute inset-0 flex flex-col justify-center gap-1 px-5 sm:px-8">
-              <h1 className="text-2xl font-extrabold tracking-tight text-navy sm:text-3xl">
-                {current.label}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Espace professionnel Dalili Dentiste Tounsi
-              </p>
-              <p className="inline-flex items-center gap-1.5 text-xs font-medium text-turquoise">
-                <RefreshCw className="size-[18px]" /> {LAST_UPDATE}
-              </p>
-            </div>
-          </header>
+          {section === "overview" ? null : (
+            <header className="relative overflow-hidden rounded-[20px] border border-border shadow-[var(--shadow-card)]">
+              <img
+                src={clinicImage}
+                alt="Cabinet dentaire moderne, lumineux et professionnel"
+                width={1600}
+                height={600}
+                loading="lazy"
+                className="h-40 w-full object-cover sm:h-52"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/10" />
+              <div className="absolute inset-0 flex flex-col justify-center gap-1 px-5 sm:px-8">
+                <h1 className="text-2xl font-extrabold tracking-tight text-navy sm:text-3xl">
+                  {current.label}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Espace professionnel Dalili Dentiste Tounsi
+                </p>
+                <p className="inline-flex items-center gap-1.5 text-xs font-medium text-turquoise">
+                  <RefreshCw className="size-[18px]" /> {LAST_UPDATE}
+                </p>
+              </div>
+            </header>
+          )}
 
-          <ProActionHub active={section} onSelect={setSection} />
+          {section === "overview" ? null : <ProActionHub active={section} onSelect={setSection} />}
 
           {section === "overview" ? null : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
