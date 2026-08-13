@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Mail, MapPin, MessageSquareText, Phone, Send, Star } from "lucide-react";
+import { CheckCircle2, Mail, MapPin, MessageSquareText, Phone, Send, Star } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,7 @@ function ContactPage() {
             onSubmit={(event) => {
               event.preventDefault();
               setSent(true);
+              event.currentTarget.reset();
             }}
           >
             <div className="grid gap-4 sm:grid-cols-2">
@@ -93,9 +94,19 @@ function ContactPage() {
               Envoyer l'avis
             </Button>
             {sent ? (
-              <p className="rounded-2xl bg-turquoise/10 p-4 text-sm font-semibold text-turquoise">
-                Merci. Votre avis est pret a etre traite par l'equipe Dalili.
-              </p>
+              <div
+                role="status"
+                className="flex items-start gap-3 rounded-2xl border border-turquoise/20 bg-turquoise/10 p-4 text-sm text-turquoise"
+              >
+                <CheckCircle2 className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+                <div>
+                  <p className="font-extrabold">Message envoye avec succes.</p>
+                  <p className="mt-1 text-turquoise/90">
+                    Merci pour votre retour. L'equipe Dalili le consultera avant toute mise a jour
+                    de la base.
+                  </p>
+                </div>
+              </div>
             ) : null}
           </form>
         </div>
