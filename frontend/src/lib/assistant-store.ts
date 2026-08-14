@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+﻿import { useSyncExternalStore } from "react";
 
 import { sendChat, type ApiDentist, type ChatReply } from "@/lib/dalili-api";
 
@@ -23,7 +23,7 @@ type State = {
 const WELCOME: AssistantMessage = {
   id: "welcome",
   from: "bot",
-  text: "Ahla ! Décrivez votre besoin (français, arabe ou arabizi) et je cherche dans la base Dalili.",
+  text: "Ahla ! Je peux chercher dans la base Dalili par gouvernorat, localite, specialite ou telephone disponible. Exemple : nheb dentiste fi Ariana.",
 };
 
 let state: State = {

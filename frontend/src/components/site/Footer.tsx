@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+﻿import { Link } from "@tanstack/react-router";
 import {
   Facebook,
   Instagram,
@@ -89,18 +89,18 @@ export function Footer() {
               Liens utiles
             </h3>
             <ul className="space-y-2 text-sm text-navy-foreground/80">
-              <li className="cursor-pointer transition-colors hover:text-turquoise">
-                Conditions d'utilisation
-              </li>
-              <li className="cursor-pointer transition-colors hover:text-turquoise">
-                Politique de confidentialité
-              </li>
-              <li className="cursor-pointer transition-colors hover:text-turquoise">
-                Signaler une information
-              </li>
-              <li className="cursor-pointer transition-colors hover:text-turquoise">
-                Mentions légales
-              </li>
+              {[
+                { label: "Conditions d'utilisation", to: "/conditions" },
+                { label: "Politique de confidentialite", to: "/confidentialite" },
+                { label: "Signaler une information", to: "/signaler" },
+                { label: "Mentions legales", to: "/mentions-legales" },
+              ].map((l) => (
+                <li key={l.to}>
+                  <Link to={l.to} className="transition-colors hover:text-turquoise">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 

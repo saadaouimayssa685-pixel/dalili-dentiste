@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as ConditionsRouteImport } from './routes/conditions'
+import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as ProfessionalRouteImport } from './routes/professional'
+import { Route as SignalerRouteImport } from './routes/signaler'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as ProfessionalIndexRouteImport } from './routes/professional.index'
 import { Route as ProfessionalAjouterCabinetRouteImport } from './routes/professional.ajouter-cabinet'
@@ -29,14 +33,34 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConditionsRoute = ConditionsRouteImport.update({
+  id: '/conditions',
+  path: '/conditions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
+  id: '/confidentialite',
+  path: '/confidentialite',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
+  id: '/mentions-legales',
+  path: '/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfessionalRoute = ProfessionalRouteImport.update({
   id: '/professional',
   path: '/professional',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignalerRoute = SignalerRouteImport.update({
+  id: '/signaler',
+  path: '/signaler',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
@@ -69,8 +93,12 @@ const PublicRechercheRoute = PublicRechercheRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/conditions': typeof ConditionsRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
   '/professional': typeof ProfessionalRouteWithChildren
+  '/signaler': typeof SignalerRoute
   '/api/$': typeof ApiSplatRoute
   '/professional/ajouter-cabinet': typeof ProfessionalAjouterCabinetRoute
   '/public/recherche': typeof PublicRechercheRoute
@@ -80,7 +108,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/conditions': typeof ConditionsRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
+  '/signaler': typeof SignalerRoute
   '/api/$': typeof ApiSplatRoute
   '/professional/ajouter-cabinet': typeof ProfessionalAjouterCabinetRoute
   '/public/recherche': typeof PublicRechercheRoute
@@ -91,8 +123,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/conditions': typeof ConditionsRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
   '/professional': typeof ProfessionalRouteWithChildren
+  '/signaler': typeof SignalerRoute
   '/api/$': typeof ApiSplatRoute
   '/professional/ajouter-cabinet': typeof ProfessionalAjouterCabinetRoute
   '/public/recherche': typeof PublicRechercheRoute
@@ -104,8 +140,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/conditions'
+    | '/confidentialite'
     | '/contact'
+    | '/mentions-legales'
     | '/professional'
+    | '/signaler'
     | '/api/$'
     | '/professional/ajouter-cabinet'
     | '/public/recherche'
@@ -115,7 +155,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/conditions'
+    | '/confidentialite'
     | '/contact'
+    | '/mentions-legales'
+    | '/signaler'
     | '/api/$'
     | '/professional/ajouter-cabinet'
     | '/public/recherche'
@@ -125,8 +169,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/conditions'
+    | '/confidentialite'
     | '/contact'
+    | '/mentions-legales'
     | '/professional'
+    | '/signaler'
     | '/api/$'
     | '/professional/ajouter-cabinet'
     | '/public/recherche'
@@ -137,8 +185,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ConditionsRoute: typeof ConditionsRoute
+  ConfidentialiteRoute: typeof ConfidentialiteRoute
   ContactRoute: typeof ContactRoute
+  MentionsLegalesRoute: typeof MentionsLegalesRoute
   ProfessionalRoute: typeof ProfessionalRouteWithChildren
+  SignalerRoute: typeof SignalerRoute
   ApiSplatRoute: typeof ApiSplatRoute
   PublicRechercheRoute: typeof PublicRechercheRoute
   PublicIndexRoute: typeof PublicIndexRoute
@@ -160,6 +212,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conditions': {
+      id: '/conditions'
+      path: '/conditions'
+      fullPath: '/conditions'
+      preLoaderRoute: typeof ConditionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confidentialite': {
+      id: '/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/confidentialite'
+      preLoaderRoute: typeof ConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -167,11 +233,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mentions-legales': {
+      id: '/mentions-legales'
+      path: '/mentions-legales'
+      fullPath: '/mentions-legales'
+      preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/professional': {
       id: '/professional'
       path: '/professional'
       fullPath: '/professional'
       preLoaderRoute: typeof ProfessionalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signaler': {
+      id: '/signaler'
+      path: '/signaler'
+      fullPath: '/signaler'
+      preLoaderRoute: typeof SignalerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/$': {
@@ -229,8 +309,12 @@ const ProfessionalRouteWithChildren = ProfessionalRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ConditionsRoute: ConditionsRoute,
+  ConfidentialiteRoute: ConfidentialiteRoute,
   ContactRoute: ContactRoute,
+  MentionsLegalesRoute: MentionsLegalesRoute,
   ProfessionalRoute: ProfessionalRouteWithChildren,
+  SignalerRoute: SignalerRoute,
   ApiSplatRoute: ApiSplatRoute,
   PublicRechercheRoute: PublicRechercheRoute,
   PublicIndexRoute: PublicIndexRoute,

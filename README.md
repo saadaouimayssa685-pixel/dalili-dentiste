@@ -29,6 +29,44 @@ Le projet aide notamment :
 - Exports CSV/XLSX et modele Power BI.
 - Automatisation GitHub Actions pour tests, build et verification des sources.
 
+## Stack technique
+
+| Partie | Outils |
+| --- | --- |
+| Frontend | Lovable, Vite, React, TypeScript, TanStack Router, Tailwind CSS, Recharts |
+| Backend | Python, FastAPI, SQLAlchemy, Pydantic |
+| Base de donnees | SQLite |
+| Scraping | HTTPX, BeautifulSoup, parsers dedies par source |
+| Normalisation | Python, RapidFuzz, regles metier Tunisie |
+| OCR | PaddleOCR, extraction FR / EN / arabe |
+| Assistant | Assistant local determine par contexte + recherche dans la base SQL |
+| Dashboard | Recharts, exports Power BI-ready |
+| Automatisation | GitHub Actions |
+
+## Interface creee avec Lovable
+
+Le frontend du projet est base sur une interface generee et amelioree avec Lovable.
+
+Lovable a ete utilise pour construire rapidement une experience moderne :
+
+- page d'accueil publique ;
+- espace de recherche ;
+- cartes dentistes ;
+- espace professionnel ;
+- dashboard ;
+- formulaire d'ajout de cabinet ;
+- scan de carte de visite ;
+- assistant flottant ;
+- pages contact, mentions legales, confidentialite et signalement.
+
+Le code Lovable se trouve dans :
+
+```text
+frontend/
+```
+
+Il a ensuite ete relie au backend FastAPI via les routes `/api/*`.
+
 ## Architecture
 
 ```text
@@ -470,6 +508,96 @@ Puis ouvrir :
 Frontend : http://127.0.0.1:5173/
 Backend  : http://127.0.0.1:8000/api/health
 ```
+
+Important :
+
+- `http://127.0.0.1:5173/` est l'interface de l'application.
+- `http://127.0.0.1:8000/` est le serveur API ; la racine peut afficher `Not Found`, c'est normal.
+- Pour tester le backend, ouvrir plutot `http://127.0.0.1:8000/api/health`.
+- Le fichier `LANCER_DALILI.bat` lance les deux serveurs et ouvre automatiquement le frontend.
+
+## Demo video automatique
+
+Le projet contient un script Playwright pour manipuler l'interface automatiquement et produire des captures + une video de demo.
+
+Fichier :
+
+```text
+demo/record-demo.mjs
+```
+
+Guide :
+
+```text
+demo/README.md
+```
+
+Lancer l'application :
+
+```powershell
+cd "C:\Users\maiss\Desktop\Dalili Dentiste"
+.\LANCER_DALILI.bat
+```
+
+Puis lancer la demo :
+
+```powershell
+cd "C:\Users\maiss\Desktop\Dalili Dentiste\frontend"
+node ..\demo\record-demo.mjs
+```
+
+La demo couvre :
+
+- page d'accueil ;
+- recherche publique ;
+- ouverture d'un profil ;
+- assistant Dalili ;
+- espace professionnel ;
+- scan OCR d'une carte de visite ;
+- dashboard professionnel.
+
+Les sorties sont creees dans :
+
+```text
+demo/output/screenshots/
+demo/output/videos/
+```
+
+## Captures d'ecran pour GitHub
+
+Les captures stables de presentation sont disponibles dans :
+
+```text
+docs/screenshots/demo-sequence/
+```
+
+| 1. Accueil | 2. Espace public |
+| --- | --- |
+| ![Accueil Dalili Dentiste](docs/screenshots/demo-sequence/01-accueil.png) | ![Espace public](docs/screenshots/demo-sequence/02-espace-public.png) |
+
+| 3. Fiche dentiste + chatbot | 4. Espace pro - vue d'ensemble |
+| --- | --- |
+| ![Fiche dentiste et chatbot](docs/screenshots/demo-sequence/03-fiche-dentiste-chatbot.png) | ![Espace pro vue ensemble](docs/screenshots/demo-sequence/04-espace-pro-vue-ensemble.png) |
+
+| 5. Dentistes | 6. Sources |
+| --- | --- |
+| ![Onglet dentistes](docs/screenshots/demo-sequence/05-espace-pro-dentistes.png) | ![Onglet sources](docs/screenshots/demo-sequence/06-espace-pro-sources.png) |
+
+| 7. Qualite | 8. Doublons |
+| --- | --- |
+| ![Onglet qualite](docs/screenshots/demo-sequence/07-espace-pro-qualite.png) | ![Onglet doublons](docs/screenshots/demo-sequence/08-espace-pro-doublons.png) |
+
+| 9. Localites | 10. Logs |
+| --- | --- |
+| ![Onglet localites](docs/screenshots/demo-sequence/09-espace-pro-localites.png) | ![Onglet logs](docs/screenshots/demo-sequence/10-espace-pro-logs.png) |
+
+| 11. Scan carte |
+| --- |
+| ![Scan carte](docs/screenshots/demo-sequence/11-scan-carte.png) |
+
+| 12. Formulaire d'ajout | 13. Contact et avis |
+| --- | --- |
+| ![Formulaire ajout cabinet](docs/screenshots/demo-sequence/12-formulaire-ajout-cabinet.png) | ![Contact et avis](docs/screenshots/demo-sequence/13-laisser-avis-contact.png) |
 
 Backend seul :
 

@@ -105,7 +105,7 @@ def test_business_card_extracts_cabinet_and_arabic_location():
     assert result.record.cabinet_name == "Advance Dental Clinic"
     assert result.record.address_raw == "مركب عائشة الطبي - عيادة A14 - الطابق الأول, شارع المنجي سليم - حدائق العوينة 2045"
     assert result.record.locality == "L'Aouina"
-    assert result.record.governorate == "Ariana"
+    assert result.record.governorate == "Tunis"
     assert result.record.primary_phone == "+21693755377"
 
 

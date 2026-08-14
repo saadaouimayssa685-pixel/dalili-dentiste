@@ -69,23 +69,30 @@ export function DentistCard({
 
           <div className="mt-4 flex flex-wrap gap-2">
             {dentist.phone ? (
-              <Button asChild size="sm" className="rounded-full">
+              <Button asChild size="sm" className="shrink-0 rounded-full px-4">
                 <a href={`tel:${dentist.phone.replace(/\s/g, "")}`} aria-label={`Appeler ${dentist.name}`}>
-                  <Phone className="size-4" aria-hidden="true" /> Appeler
+                  <Phone className="size-4" aria-hidden="true" />
+                  <span className="whitespace-nowrap">Appeler</span>
                 </a>
               </Button>
             ) : null}
             <Button
               size="sm"
               variant="outline"
-              className="rounded-full"
+              className="shrink-0 rounded-full px-4"
               onClick={() => onOpen(dentist)}
             >
-              Voir le profil
+              <span className="whitespace-nowrap">Voir le profil</span>
             </Button>
-            <Button asChild size="sm" variant="outline" className="rounded-full border-turquoise/40 text-turquoise hover:bg-turquoise/10">
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="shrink-0 rounded-full border-turquoise/40 px-4 text-turquoise hover:bg-turquoise/10"
+            >
               <a href={dentistMapsUrl(dentist)} target="_blank" rel="noreferrer">
-                <ExternalLink className="size-4" aria-hidden="true" /> Google Maps
+                <ExternalLink className="size-4" aria-hidden="true" />
+                <span className="whitespace-nowrap">Voir emplacement</span>
               </a>
             </Button>
           </div>

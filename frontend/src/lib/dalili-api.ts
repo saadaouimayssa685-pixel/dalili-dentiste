@@ -72,6 +72,11 @@ export type ScanFields = {
   phone: string;
   address: string;
   localite: string;
+  gouvernorat?: string;
+  exists?: boolean;
+  existingDentistName?: string;
+  existingDentistId?: string;
+  matchMethod?: string;
 };
 
 export type ChatReply = {
@@ -277,6 +282,24 @@ export async function scanCard(file: File): Promise<ScanFields> {
   };
 }
 
+export async function checkCabinetProposal(fields: ScanFields): Promise<ScanFields> {
+  const data = rec(
+    await request<unknown>("/api/cabinet-proposals/check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fields),
+    }),
+  );
+  const dentist = rec(pick(data, ["dentist"]));
+  return {
+    ...fields,
+    exists: pick(data, ["exists"]) === true,
+    existingDentistName: str(pick(dentist, ["name", "full_name"])) ?? undefined,
+    existingDentistId: str(pick(dentist, ["id"])) ?? undefined,
+    matchMethod: str(pick(data, ["match_method"])) ?? str(pick(dentist, ["match_method"])) ?? undefined,
+  };
+}
+
 export async function sendChat(message: string, sessionId: string): Promise<ChatReply> {
   const o = rec(
     await request<unknown>("/api/chat", {
@@ -312,12 +335,19 @@ export async function resetChat(sessionId: string): Promise<void> {
   await request<unknown>(`/api/chat/${encodeURIComponent(sessionId)}`, { method: "DELETE" });
 }
 
-export async function submitCabinetProposal(fields: ScanFields): Promise<void> {
-  await request<unknown>("/api/cabinet-proposals", {
+export async function submitCabinetProposal(fields: ScanFields): Promise<{
+  status: string;
+  dentistId?: string;
+}> {
+  const data = rec(await request<unknown>("/api/cabinet-proposals", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(fields),
-  });
+  }));
+  return {
+    status: str(pick(data, ["status"])) ?? "saved_to_database",
+    dentistId: str(pick(data, ["dentist_id"])) ?? undefined,
+  };
 }
 
 export function initials(name: string): string {

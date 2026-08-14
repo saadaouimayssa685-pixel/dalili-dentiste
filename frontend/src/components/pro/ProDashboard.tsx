@@ -1,4 +1,4 @@
-import {
+﻿import {
   BadgeCheck,
   Copy,
   Database,
@@ -17,7 +17,6 @@ import {
   ScanLine,
   ScrollText,
   Search,
-  Server,
   ShieldCheck,
   UserRound,
   UserRoundCheck,
@@ -58,7 +57,6 @@ const NAV = [
   { id: "quality", label: "Qualité des données", icon: ShieldCheck },
   { id: "duplicates", label: "Doublons", icon: Copy },
   { id: "localities", label: "Localités", icon: MapPin },
-  { id: "database", label: "Base de données", icon: Server },
   { id: "logs", label: "Logs", icon: ScrollText },
   { id: "scan", label: "Scan carte", icon: ScanLine },
   { id: "map", label: "Cartographie", icon: MapIcon },
@@ -67,7 +65,7 @@ const NAV = [
 
 type SectionId = (typeof NAV)[number]["id"];
 
-const MAIN_NAV = NAV.slice(0, 8);
+const MAIN_NAV = NAV.slice(0, 7);
 
 const KPIS = [
   { icon: UserRoundCheck, label: "Dentistes uniques", value: "4 095" },
@@ -273,6 +271,18 @@ export function ProDashboard() {
 
   const current = NAV.find((n) => n.id === section)!;
 
+  function selectSection(next: SectionId) {
+    setSection(next);
+    if (typeof window === "undefined") return;
+    window.history.replaceState(null, "", `${window.location.pathname}#${next}`);
+    window.requestAnimationFrame(() => {
+      document.getElementById("professional-content")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }
+
   function applyScanFields(fields: ScanFields) {
     const text = [fields.address, fields.localite].filter(Boolean).join(" ").toLowerCase();
     const gouvernorat =
@@ -284,7 +294,7 @@ export function ProDashboard() {
       SPECIALITES.find((s) => specialityText.includes(s.toLowerCase())) ?? filters.speciality;
 
     setFilters({ gouvernorat, ville, speciality });
-    setSection("dentists");
+    selectSection("dentists");
   }
 
   return (
@@ -302,7 +312,7 @@ export function ProDashboard() {
                 return (
                   <button
                     key={n.id}
-                    onClick={() => setSection(n.id)}
+                    onClick={() => selectSection(n.id)}
                     className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors lg:w-full ${
                       active
                         ? "bg-turquoise text-turquoise-foreground"
@@ -318,7 +328,7 @@ export function ProDashboard() {
           </div>
         </aside>
 
-        <main className="space-y-6">
+        <main id="professional-content" className="space-y-6">
           {section === "overview" ? null : (
             <header className="relative overflow-hidden rounded-[20px] border border-border shadow-[var(--shadow-card)]">
               <img
@@ -344,7 +354,7 @@ export function ProDashboard() {
             </header>
           )}
 
-          {section === "overview" ? null : <ProActionHub active={section} onSelect={setSection} />}
+          {section === "overview" ? null : <ProActionHub active={section} onSelect={selectSection} />}
 
           {section === "overview" ? null : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -592,60 +602,6 @@ export function ProDashboard() {
             </Panel>
           ) : null}
 
-          {section === "database" ? (
-            <Panel title="Base de données" description="Vue tabulaire consolidée de l'annuaire.">
-              <div className="overflow-x-auto rounded-2xl border border-border">
-                <table className="w-full min-w-[720px] text-sm">
-                  <thead className="bg-soft/70 text-left text-xs uppercase tracking-wide text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-3">Cabinet</th>
-                      <th className="px-4 py-3">Spécialité</th>
-                      <th className="px-4 py-3">Localisation</th>
-                      <th className="px-4 py-3">Téléphone</th>
-                      <th className="px-4 py-3">Sources</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {DENTISTS.map((d) => (
-                      <tr key={d.id} className="border-t border-border hover:bg-soft/50">
-                        <td className="px-4 py-3 font-semibold text-navy">{d.name}</td>
-                        <td className="px-4 py-3 text-muted-foreground">{d.speciality}</td>
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {d.gouvernorat} · {d.ville}
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground">{d.phone}</td>
-                        <td className="px-4 py-3">
-                          <SourceBadges sources={DENTIST_SOURCES[d.id] ?? []} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <Button
-                variant="outline"
-                className="mt-4 rounded-full border-primary/30 text-primary"
-                onClick={() =>
-                  downloadCsv(
-                    "dalili-base-de-donnees.csv",
-                    toCsv(
-                      ["Nom", "Spécialité", "Gouvernorat", "Ville", "Téléphone", "Sources"],
-                      DENTISTS.map((d) => [
-                        d.name,
-                        d.speciality,
-                        d.gouvernorat,
-                        d.ville,
-                        d.phone,
-                        (DENTIST_SOURCES[d.id] ?? []).join(", "),
-                      ]),
-                    ),
-                  )
-                }
-              >
-                <Download className="size-4" /> Exporter en Excel
-              </Button>
-            </Panel>
-          ) : null}
 
           {section === "logs" ? (
             <Panel title="Logs" description="Historique des imports et traitements.">
@@ -742,7 +698,7 @@ export function ProDashboard() {
         <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
-              <DialogTitle className="text-navy">Aperçu Excel — {preview?.name}</DialogTitle>
+              <DialogTitle className="text-navy">Aperçu Excel - {preview?.name}</DialogTitle>
             </DialogHeader>
             <div className="overflow-x-auto rounded-2xl border border-border">
               <table className="w-full min-w-[600px] text-sm">
@@ -774,3 +730,4 @@ export function ProDashboard() {
     </TooltipProvider>
   );
 }
+

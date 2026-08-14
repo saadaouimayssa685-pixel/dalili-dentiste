@@ -88,7 +88,7 @@ export function DentistProfileDialog({
               {dentist.phone ? (
                 <Button asChild className="rounded-xl">
                   <a href={`tel:${dentist.phone.replace(/\s/g, "")}`}>
-                    <Phone className="size-4" aria-hidden="true" /> Appeler le cabinet
+                    <Phone className="size-4" aria-hidden="true" /> Appeler
                   </a>
                 </Button>
               ) : (
@@ -98,7 +98,7 @@ export function DentistProfileDialog({
               )}
               <Button asChild variant="outline" className="rounded-xl border-turquoise/40 text-turquoise hover:bg-turquoise/10">
                 <a href={dentistMapsUrl(dentist)} target="_blank" rel="noreferrer">
-                  <ExternalLink className="size-4" aria-hidden="true" /> Voir sur Google Maps
+                  <ExternalLink className="size-4" aria-hidden="true" /> Voir emplacement
                 </a>
               </Button>
             </div>

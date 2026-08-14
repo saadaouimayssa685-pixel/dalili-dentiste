@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -16,8 +17,8 @@ from sqlalchemy import func, or_, text
 
 from app.chatbot import ChatbotContext, local_llm
 from app.config import ROOT, settings
-from app.database import SessionLocal, init_db
-from app.models import DentistRecord
+from app.database import SessionLocal, init_db, rebuild_unique_dentists, upsert_dentist
+from app.models import DentistRecord, PhoneNumber, PhoneSource, PhoneType, PhoneValidationStatus
 from app.normalization.locations import locations
 from app.services.business_card_ocr import paddleocr_available, scan_business_card
 
@@ -49,6 +50,7 @@ class CabinetProposal(BaseModel):
     phone: str | None = None
     address: str | None = None
     localite: str | None = None
+    gouvernorat: str | None = None
 
 
 @app.on_event("startup")
@@ -574,6 +576,17 @@ def reset_chat(session_id: str) -> dict[str, Any]:
     return {"session_id": session_id, "status": "reset"}
 
 
+@app.post("/api/cabinet-proposals/check")
+def cabinet_proposal_check(payload: CabinetProposal) -> dict[str, Any]:
+    with SessionLocal() as session:
+        existing = _find_existing_dentist(session, payload)
+    return {
+        "exists": existing is not None,
+        "dentist": existing,
+        "match_method": existing.get("match_method") if existing else None,
+    }
+
+
 @app.post("/api/cabinet-proposals")
 def cabinet_proposal(payload: CabinetProposal) -> dict[str, Any]:
     proposal_dir = ROOT / "data" / "proposals"
@@ -583,7 +596,53 @@ def cabinet_proposal(payload: CabinetProposal) -> dict[str, Any]:
     row = {"id": proposal_id, **payload.model_dump()}
     with path.open("a", encoding="utf-8") as file:
         file.write(json.dumps(row, ensure_ascii=False) + "\n")
-    return {"id": proposal_id, "status": "received"}
+
+    with SessionLocal() as session:
+        existing = _find_existing_dentist(session, payload)
+        if existing:
+            return {
+                "id": proposal_id,
+                "dentist_id": existing["id"],
+                "status": "already_exists",
+                "existing": existing,
+            }
+
+    record = DentistRecord(
+        source="business_card_ocr",
+        source_profile_url=f"business-card-proposal:{proposal_id}",
+        full_name_source=payload.name,
+        professional_title_exact="Dentiste",
+        specialties=[payload.speciality or "Dentiste"],
+        address_raw=payload.address,
+        locality=payload.localite,
+        governorate=payload.gouvernorat,
+        country="Tunisie",
+        phone_numbers=[
+            PhoneNumber(
+                raw=payload.phone,
+                normalized=payload.phone,
+                type=PhoneType.UNKNOWN,
+                sources=[PhoneSource.BUSINESS_CARD_OCR],
+                is_public_professional=True,
+                is_valid=True,
+                validation_status=PhoneValidationStatus.VALID,
+            )
+        ]
+        if payload.phone
+        else [],
+        last_verified_at=datetime.now(timezone.utc),
+    )
+    with SessionLocal() as session:
+        saved = upsert_dentist(session, record)
+        session.commit()
+        dentist_id = saved.id
+        try:
+            rebuild_unique_dentists(session)
+        except Exception:
+            # La proposition reste sauvegardée même si la consolidation doit être relancée.
+            pass
+
+    return {"id": proposal_id, "dentist_id": dentist_id, "status": "saved_to_database"}
 
 
 def _dentist_where(filters: dict[str, Any]) -> tuple[str, dict[str, Any]]:
@@ -636,6 +695,85 @@ def _public_dentist(row: dict[str, Any]) -> dict[str, Any]:
         "quality_score": row.get("quality_score"),
         "quality_status": row.get("quality_status"),
     }
+
+
+def _find_existing_dentist(session, payload: CabinetProposal) -> dict[str, Any] | None:
+    name_key = _identity_name_key(payload.name)
+    location_key = _location_key(payload.localite or payload.address)
+    governorate_key = locations.governorate(_clean(payload.gouvernorat))
+    phone_tail = _phone_tail(payload.phone)
+
+    rows = [
+        dict(row)
+        for row in session.execute(
+            text(
+                """
+                SELECT id, full_name, governorate, locality, address, phone, sources, quality_score
+                FROM dentists_clean
+                WHERE full_name IS NOT NULL AND TRIM(full_name) != ''
+                """
+            )
+        ).mappings()
+    ]
+
+    for row in rows:
+        if name_key and name_key == _identity_name_key(row.get("full_name")):
+            row_location = _location_key(row.get("locality") or row.get("address"))
+            row_governorate = locations.governorate(_clean(row.get("governorate")))
+            same_locality = bool(location_key and row_location and location_key == row_location)
+            same_governorate = bool(governorate_key and row_governorate and governorate_key == row_governorate)
+            if same_locality or same_governorate:
+                return _existing_payload(row, "name_location")
+
+    for row in rows:
+        row_phone_tail = _phone_tail(row.get("phone"))
+        if phone_tail and row_phone_tail and phone_tail == row_phone_tail:
+            if not name_key or name_key == _identity_name_key(row.get("full_name")):
+                return _existing_payload(row, "phone")
+
+    return None
+
+
+def _existing_payload(row: dict[str, Any], method: str) -> dict[str, Any]:
+    return {
+        "id": str(row.get("id")),
+        "name": row.get("full_name"),
+        "gouvernorat": row.get("governorate"),
+        "localite": row.get("locality"),
+        "phone": row.get("phone"),
+        "sources": _split_sources(row.get("sources")),
+        "quality_score": row.get("quality_score"),
+        "match_method": method,
+    }
+
+
+def _identity_name_key(value: Any) -> str | None:
+    text_value = _clean(value)
+    if not text_value:
+        return None
+    normalized = text_value.casefold()
+    normalized = re.sub(r"\b(dr|docteur|doctor|pr|professeur|mme|mr|m)\b\.?", " ", normalized)
+    normalized = re.sub(r"[^a-zà-ÿ\u0600-\u06ff ]+", " ", normalized, flags=re.I)
+    parts = [part for part in normalized.split() if len(part) > 1]
+    if len(parts) < 2:
+        return " ".join(parts) or None
+    return " ".join(sorted(parts))
+
+
+def _location_key(value: Any) -> str | None:
+    text_value = _clean(value)
+    if not text_value:
+        return None
+    match = locations.locality(text_value)
+    normalized = _clean(match.name) or text_value
+    return normalized.casefold()
+
+
+def _phone_tail(value: Any) -> str | None:
+    digits = re.sub(r"\D+", "", str(value or ""))
+    if digits.startswith("216") and len(digits) > 8:
+        digits = digits[-8:]
+    return digits[-8:] if len(digits) >= 8 else None
 
 
 def _maps_url(row: dict[str, Any]) -> str | None:

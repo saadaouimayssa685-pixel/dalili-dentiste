@@ -3,7 +3,14 @@ import { useEffect, useRef, useState } from "react";
 
 import { ScanResult } from "@/components/public/ScanResult";
 import { Button } from "@/components/ui/button";
-import { ApiError, fetchScanStatus, scanCard, type ScanFields, type ScanStatus } from "@/lib/dalili-api";
+import {
+  ApiError,
+  checkCabinetProposal,
+  fetchScanStatus,
+  scanCard,
+  type ScanFields,
+  type ScanStatus,
+} from "@/lib/dalili-api";
 
 const ACCEPT = "image/jpeg,image/jpg,image/png";
 
@@ -43,7 +50,12 @@ export function BusinessCardScanner({
     setError(null);
     setLoading(true);
     try {
-      setFields(await scanCard(file));
+      const scanned = await scanCard(file);
+      try {
+        setFields(await checkCabinetProposal(scanned));
+      } catch {
+        setFields(scanned);
+      }
     } catch (err) {
       setError(
         err instanceof ApiError && err.message
@@ -172,6 +184,12 @@ export function BusinessCardScanner({
           fields={fields}
           onChange={setFields}
           onSearch={() => onSearchFields(fields)}
+          onSaved={() => {
+            setFields(null);
+            setError(null);
+            if (inputRef.current) inputRef.current.value = "";
+            if (cameraRef.current) cameraRef.current.value = "";
+          }}
           searchIcon={<Search className="size-4" aria-hidden="true" />}
         />
       ) : null}

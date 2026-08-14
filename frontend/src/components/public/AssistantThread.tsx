@@ -1,4 +1,4 @@
-import { Loader2, MapPin, Phone, Send, Sparkles, Stethoscope } from "lucide-react";
+﻿import { Loader2, MapPin, Phone, Send, Sparkles, Stethoscope } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import {
@@ -11,10 +11,10 @@ import {
 import { initials, type ApiDentist } from "@/lib/dalili-api";
 
 const SUGGESTIONS = [
-  "Dentiste à Tunis",
-  "Orthodontiste à Sousse",
-  "Dentiste pour enfant",
-  "Implantologie à Sfax",
+  "nheb dentiste fi Ariana",
+  "Orthodontiste a Sousse",
+  "Dentiste avec telephone a Tunis",
+  "Implantologie a Sfax",
 ];
 
 function filterLabel(f: AssistantFilters) {
@@ -125,7 +125,7 @@ export function AssistantThread({ compact = false }: { compact?: boolean }) {
         ))}
         {loading ? (
           <p className="flex animate-pulse items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> Dalili recherche…
+            <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> Dalili recherche...
           </p>
         ) : null}
         <div ref={endRef} />

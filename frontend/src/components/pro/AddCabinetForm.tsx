@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+﻿import { Link } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Building2,
@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { GOUVERNORATS, SPECIALITES, VILLES } from "@/lib/dalili-data";
+import { checkCabinetProposal, submitCabinetProposal } from "@/lib/dalili-api";
 
 type FormValues = {
   fullName: string;
@@ -79,6 +80,10 @@ export function AddCabinetForm() {
   type ErrorKey = keyof FormValues | "consent";
   const [errors, setErrors] = useState<Partial<Record<ErrorKey, string>>>({});
   const [sent, setSent] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState(
+    "Votre demande a ete envoyee pour verification.",
+  );
+  const [submitting, setSubmitting] = useState(false);
 
   const villes = useMemo(
     () => (values.gouvernorat ? (VILLES[values.gouvernorat] ?? []) : []),
@@ -117,8 +122,7 @@ export function AddCabinetForm() {
             Votre demande a été envoyée
           </h1>
           <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-            Votre demande a été envoyée pour vérification. Notre équipe contrôlera les informations
-            avant leur publication sur Dalili Dentiste Tounsi.
+            {submitMessage}
           </p>
           <Button asChild className="mt-6 rounded-full">
             <Link to="/">
@@ -145,7 +149,35 @@ export function AddCabinetForm() {
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
-            if (validate()) setSent(true);
+            if (!validate()) return;
+            setSubmitting(true);
+            const fields = {
+              name: values.fullName,
+              speciality: values.speciality,
+              phone: values.phone,
+              address: values.adresse,
+              localite: values.ville,
+              gouvernorat: values.gouvernorat,
+            };
+            void checkCabinetProposal(fields)
+              .then((checked) => submitCabinetProposal(checked))
+              .then((result) => {
+                setSubmitMessage(
+                  result.status === "already_exists"
+                    ? "Ce cabinet existe deja dans la base. Votre demande est gardee pour verification et mise a jour."
+                    : "Cabinet ajoute a la base. Notre equipe vous contactera bientot pour validation.",
+                );
+                setValues(EMPTY);
+                setConsent(false);
+                setSent(true);
+              })
+              .catch(() => {
+                setErrors((current) => ({
+                  ...current,
+                  consent: "Ajout impossible pour le moment. Verifiez que le backend est lance.",
+                }));
+              })
+              .finally(() => setSubmitting(false));
           }}
           className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]"
         >
@@ -332,8 +364,8 @@ export function AddCabinetForm() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button type="submit" className="rounded-full">
-              <Send className="size-[18px]" /> Envoyer la demande
+            <Button type="submit" className="rounded-full" disabled={submitting}>
+              <Send className="size-[18px]" /> {submitting ? "Envoi..." : "Envoyer la demande"}
             </Button>
             <Button asChild variant="outline" className="rounded-full">
               <Link to="/">
@@ -379,3 +411,4 @@ export function AddCabinetForm() {
     </div>
   );
 }
+

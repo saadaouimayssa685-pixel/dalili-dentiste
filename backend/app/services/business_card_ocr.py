@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import hashlib
 import importlib.util
@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from app.config import settings
 from app.models import DentistRecord, PhoneSource
 from app.normalization.locations import locations
 from app.normalization.names import parse_name
@@ -41,30 +42,30 @@ DENTAL_KEYWORDS = {
     "parodontologie",
     "periodontology",
     "pedodontie",
-    "pédodontie",
+    "pÃ©dodontie",
     "chirurgien dentiste",
     "medecin dentiste",
-    "médecin dentiste",
-    "طبيبة أسنان",
-    "طبيب أسنان",
-    "طب الأسنان",
-    "طبيبة اسنان",
-    "طبيب اسنان",
-    "طب الاسنان",
-    "عيادة أسنان",
-    "عيادة الاسنان",
-    "جراحة الفم",
-    "زرع الأسنان",
-    "زرع الاسنان",
-    "تجميل الأسنان",
-    "تجميل الاسنان",
-    "تقويم الأسنان",
-    "تقويم الاسنان",
+    "mÃ©decin dentiste",
+    "Ø·Ø¨ÙŠØ¨Ø© Ø£Ø³Ù†Ø§Ù†",
+    "Ø·Ø¨ÙŠØ¨ Ø£Ø³Ù†Ø§Ù†",
+    "Ø·Ø¨ Ø§Ù„Ø£Ø³Ù†Ø§Ù†",
+    "Ø·Ø¨ÙŠØ¨Ø© Ø§Ø³Ù†Ø§Ù†",
+    "Ø·Ø¨ÙŠØ¨ Ø§Ø³Ù†Ø§Ù†",
+    "Ø·Ø¨ Ø§Ù„Ø§Ø³Ù†Ø§Ù†",
+    "Ø¹ÙŠØ§Ø¯Ø© Ø£Ø³Ù†Ø§Ù†",
+    "Ø¹ÙŠØ§Ø¯Ø© Ø§Ù„Ø§Ø³Ù†Ø§Ù†",
+    "Ø¬Ø±Ø§Ø­Ø© Ø§Ù„ÙÙ…",
+    "Ø²Ø±Ø¹ Ø§Ù„Ø£Ø³Ù†Ø§Ù†",
+    "Ø²Ø±Ø¹ Ø§Ù„Ø§Ø³Ù†Ø§Ù†",
+    "ØªØ¬Ù…ÙŠÙ„ Ø§Ù„Ø£Ø³Ù†Ø§Ù†",
+    "ØªØ¬Ù…ÙŠÙ„ Ø§Ù„Ø§Ø³Ù†Ø§Ù†",
+    "ØªÙ‚ÙˆÙŠÙ… Ø§Ù„Ø£Ø³Ù†Ø§Ù†",
+    "ØªÙ‚ÙˆÙŠÙ… Ø§Ù„Ø§Ø³Ù†Ø§Ù†",
 }
 
 REJECT_KEYWORDS = {
     "veterinaire",
-    "vétérinaire",
+    "vÃ©tÃ©rinaire",
     "avocat",
     "architecte",
     "comptable",
@@ -76,19 +77,19 @@ REJECT_KEYWORDS = {
     "lawyer",
     "architect",
     "accountant",
-    "صيدلية",
-    "صيدلي",
-    "محامي",
-    "مهندس معماري",
-    "مطعم",
+    "ØµÙŠØ¯Ù„ÙŠØ©",
+    "ØµÙŠØ¯Ù„ÙŠ",
+    "Ù…Ø­Ø§Ù…ÙŠ",
+    "Ù…Ù‡Ù†Ø¯Ø³ Ù…Ø¹Ù…Ø§Ø±ÙŠ",
+    "Ù…Ø·Ø¹Ù…",
 }
 
 OCR_LANGUAGES = ("fr", "en", "arabic")
-DOCTOR_TITLE_RE = re.compile(r"(^|\b)(d\.|dr\.?|docteur|doctor|الدكتورة|الدكتور|دكتورة|دكتور|د\.)\b", re.I)
+DOCTOR_TITLE_RE = re.compile(r"(^|\b)(d\.|dr\.?|docteur|doctor|Ø§Ù„Ø¯ÙƒØªÙˆØ±Ø©|Ø§Ù„Ø¯ÙƒØªÙˆØ±|Ø¯ÙƒØªÙˆØ±Ø©|Ø¯ÙƒØªÙˆØ±|Ø¯\.)\b", re.I)
 ARABIC_RE = re.compile(r"[\u0600-\u06ff]")
-ARABIC_ADDRESS_TOKENS = {"شارع", "نهج", "طريق", "عمارة", "مركب", "الطابق", "عيادة", "حدائق", "حي"}
-ARABIC_TITLE_WORDS = {"الدكتورة", "الدكتور", "دكتورة", "دكتور", "طبيبة", "طبيب"}
-EXTRA_ARABIC_ADDRESS_TOKENS = {"مجمع", "مركز", "العيادة", "الطبي", "الطابق", "حدائق", "عمارة", "نهج"}
+ARABIC_ADDRESS_TOKENS = {"Ø´Ø§Ø±Ø¹", "Ù†Ù‡Ø¬", "Ø·Ø±ÙŠÙ‚", "Ø¹Ù…Ø§Ø±Ø©", "Ù…Ø±ÙƒØ¨", "Ø§Ù„Ø·Ø§Ø¨Ù‚", "Ø¹ÙŠØ§Ø¯Ø©", "Ø­Ø¯Ø§Ø¦Ù‚", "Ø­ÙŠ"}
+ARABIC_TITLE_WORDS = {"Ø§Ù„Ø¯ÙƒØªÙˆØ±Ø©", "Ø§Ù„Ø¯ÙƒØªÙˆØ±", "Ø¯ÙƒØªÙˆØ±Ø©", "Ø¯ÙƒØªÙˆØ±", "Ø·Ø¨ÙŠØ¨Ø©", "Ø·Ø¨ÙŠØ¨"}
+EXTRA_ARABIC_ADDRESS_TOKENS = {"Ù…Ø¬Ù…Ø¹", "Ù…Ø±ÙƒØ²", "Ø§Ù„Ø¹ÙŠØ§Ø¯Ø©", "Ø§Ù„Ø·Ø¨ÙŠ", "Ø§Ù„Ø·Ø§Ø¨Ù‚", "Ø­Ø¯Ø§Ø¦Ù‚", "Ø¹Ù…Ø§Ø±Ø©", "Ù†Ù‡Ø¬"}
 CABINET_KEYWORDS = {
     "cabinet",
     "cabinet dentaire",
@@ -97,13 +98,13 @@ CABINET_KEYWORDS = {
     "clinic",
     "dental clinic",
     "centre medical",
-    "centre médical",
+    "centre mÃ©dical",
     "centre dentaire",
-    "عيادة",
-    "العيادة",
-    "مصحة",
-    "مركز طبي",
-    "مركز الأسنان",
+    "Ø¹ÙŠØ§Ø¯Ø©",
+    "Ø§Ù„Ø¹ÙŠØ§Ø¯Ø©",
+    "Ù…ØµØ­Ø©",
+    "Ù…Ø±ÙƒØ² Ø·Ø¨ÙŠ",
+    "Ù…Ø±ÙƒØ² Ø§Ù„Ø£Ø³Ù†Ø§Ù†",
 }
 NON_CABINET_KEYWORDS = {
     "oral surgery",
@@ -112,25 +113,77 @@ NON_CABINET_KEYWORDS = {
     "orthodontie",
     "orthodontics",
     "chirurgie",
-    "جراحة",
-    "زرع",
-    "تجميل",
-    "تقويم",
-    "طبيبة",
-    "طبيب",
+    "Ø¬Ø±Ø§Ø­Ø©",
+    "Ø²Ø±Ø¹",
+    "ØªØ¬Ù…ÙŠÙ„",
+    "ØªÙ‚ÙˆÙŠÙ…",
+    "Ø·Ø¨ÙŠØ¨Ø©",
+    "Ø·Ø¨ÙŠØ¨",
 }
 ARABIC_LOCALITY_ALIASES = {
-    "حدائق العوينة": ("L'Aouina", "Ariana"),
-    "العوينة": ("L'Aouina", "Ariana"),
-    "أريانة": ("Ariana", "Ariana"),
-    "اريانة": ("Ariana", "Ariana"),
-    "تونس": ("Tunis", "Tunis"),
-    "نابل": ("Nabeul", "Nabeul"),
-    "سوسة": ("Sousse", "Sousse"),
-    "صفاقس": ("Sfax", "Sfax"),
-    "المنستير": ("Monastir", "Monastir"),
-    "بن عروس": ("Ben Arous", "Ben Arous"),
+    "Ø­Ø¯Ø§Ø¦Ù‚ Ø§Ù„Ø¹ÙˆÙŠÙ†Ø©": ("L'Aouina", "Ariana"),
+    "Ø§Ù„Ø¹ÙˆÙŠÙ†Ø©": ("L'Aouina", "Ariana"),
+    "Ø£Ø±ÙŠØ§Ù†Ø©": ("Ariana", "Ariana"),
+    "Ø§Ø±ÙŠØ§Ù†Ø©": ("Ariana", "Ariana"),
+    "ØªÙˆÙ†Ø³": ("Tunis", "Tunis"),
+    "Ù†Ø§Ø¨Ù„": ("Nabeul", "Nabeul"),
+    "Ø³ÙˆØ³Ø©": ("Sousse", "Sousse"),
+    "ØµÙØ§Ù‚Ø³": ("Sfax", "Sfax"),
+    "Ø§Ù„Ù…Ù†Ø³ØªÙŠØ±": ("Monastir", "Monastir"),
+    "Ø¨Ù† Ø¹Ø±ÙˆØ³": ("Ben Arous", "Ben Arous"),
 }
+
+
+POSTAL_LOCALITIES: dict[str, tuple[str, str, str | None]] = {}
+for item in settings.localities_reference.get("localities", []):
+    postal_code = str(item.get("postal_code") or "").strip()
+    locality_name = str(item.get("canonical_name") or "").strip()
+    governorate_name = str(item.get("governorate") or "").strip()
+    delegation_name = str(item.get("delegation") or "").strip() or None
+    if postal_code and locality_name and governorate_name:
+        POSTAL_LOCALITIES[postal_code] = (locality_name, governorate_name, delegation_name)
+
+REAL_ARABIC_DENTAL_KEYWORDS = {
+    "طبيبة أسنان",
+    "طبيبة اسنان",
+    "طبيب أسنان",
+    "طبيب اسنان",
+    "طب الأسنان",
+    "طب الاسنان",
+    "عيادة أسنان",
+    "عيادة اسنان",
+    "جراحة الفم",
+    "زرع الأسنان",
+    "زرع الاسنان",
+    "تجميل الأسنان",
+    "تجميل الاسنان",
+    "تقويم الأسنان",
+    "تقويم الاسنان",
+}
+
+REAL_ARABIC_ADDRESS_TOKENS = {
+    "شارع",
+    "نهج",
+    "طريق",
+    "عمارة",
+    "مركب",
+    "مجمع",
+    "الطابق",
+    "عيادة",
+    "العيادة",
+    "حدائق",
+    "حي",
+}
+
+REAL_ARABIC_DOCTOR_TITLES = {
+    "الدكتورة",
+    "الدكتور",
+    "دكتورة",
+    "دكتور",
+    "د.",
+}
+
+DENTAL_KEYWORDS.update(REAL_ARABIC_DENTAL_KEYWORDS)
 
 
 @dataclass(frozen=True)
@@ -152,7 +205,7 @@ def run_paddle_ocr(image_bytes: bytes, suffix: str = ".png") -> list[str]:
     try:
         from paddleocr import PaddleOCR
     except Exception as exc:  # noqa: BLE001
-        raise RuntimeError("PaddleOCR n'est pas installé. Installe paddleocr et paddlepaddle pour activer le scan.") from exc
+        raise RuntimeError("PaddleOCR n'est pas installÃ©. Installe paddleocr et paddlepaddle pour activer le scan.") from exc
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         tmp.write(image_bytes)
@@ -168,7 +221,7 @@ def run_paddle_ocr(image_bytes: bytes, suffix: str = ".png") -> list[str]:
             except Exception as exc:  # noqa: BLE001
                 errors.append(f"{lang}: {exc}")
         if not lines and errors:
-            raise RuntimeError("PaddleOCR a échoué: " + " | ".join(errors))
+            raise RuntimeError("PaddleOCR a Ã©chouÃ©: " + " | ".join(errors))
     finally:
         Path(image_path).unlink(missing_ok=True)
 
@@ -203,7 +256,7 @@ def _run_paddle_ocr_engine(ocr, image_path: str):
             return ocr.ocr(image_path)
         except TypeError:
             return ocr.ocr(image_path, cls=True)
-    raise RuntimeError("Version PaddleOCR non supportée: méthode ocr/predict introuvable.")
+    raise RuntimeError("Version PaddleOCR non supportÃ©e: mÃ©thode ocr/predict introuvable.")
 
 
 def _extract_ocr_lines(result: Any) -> list[str]:
@@ -251,31 +304,31 @@ def analyze_business_card_text(lines: list[str]) -> BusinessCardOcrResult:
     reasons: list[str] = []
     score = 0
 
-    if any(keyword in normalized for keyword in DENTAL_KEYWORDS):
+    if _contains_any(normalized, text, DENTAL_KEYWORDS):
         score += 45
-        reasons.append("mot clé dentaire détecté")
-    if DOCTOR_TITLE_RE.search(normalized) or DOCTOR_TITLE_RE.search(text):
+        reasons.append("mot clÃ© dentaire dÃ©tectÃ©")
+    if DOCTOR_TITLE_RE.search(normalized) or DOCTOR_TITLE_RE.search(text) or any(title in text for title in REAL_ARABIC_DOCTOR_TITLES):
         score += 20
-        reasons.append("titre docteur détecté")
+        reasons.append("titre docteur dÃ©tectÃ©")
     phones = extract_phone_candidates(text)
     valid_phones = [normalize_phone(phone, PhoneSource.BUSINESS_CARD_OCR) for phone in phones]
     valid_phones = [phone for phone in valid_phones if phone.is_valid]
     if valid_phones:
         score += 15
-        reasons.append("téléphone tunisien détecté")
+        reasons.append("tÃ©lÃ©phone tunisien dÃ©tectÃ©")
     gov = extract_governorate(text)
     locality = extract_locality(text)
     if gov or locality:
         score += 10
-        reasons.append("localisation tunisienne détectée")
+        reasons.append("localisation tunisienne dÃ©tectÃ©e")
     if any(keyword in normalized for keyword in REJECT_KEYWORDS):
         score -= 45
-        reasons.append("mot clé non dentaire détecté")
+        reasons.append("mot clÃ© non dentaire dÃ©tectÃ©")
 
     name = extract_name(clean_lines)
     if name:
         score += 10
-        reasons.append("nom probable détecté")
+        reasons.append("nom probable dÃ©tectÃ©")
 
     confidence = max(0, min(score, 100))
     is_dentist = confidence >= 60
@@ -293,12 +346,16 @@ def extract_name(lines: list[str]) -> str | None:
     for line in lines:
         if _is_non_name_line(line):
             continue
+        if line.startswith("الدكتورة "):
+            return "د. " + compact_spaces(line.removeprefix("الدكتورة "))
+        if line.startswith("الدكتور "):
+            return "د. " + compact_spaces(line.removeprefix("الدكتور "))
         if re.search(r"^\s*(d\.|dr\b|docteur\b|doctor\b)", line, flags=re.I):
             cleaned = re.sub(r"^\s*d\.\s*", "Dr ", line, flags=re.I)
             cleaned = re.sub(r"\b(doctor|docteur)\b", "Dr", cleaned, flags=re.I)
             return compact_spaces(cleaned)
-        if re.search(r"^\s*(الدكتورة|الدكتور|دكتورة|دكتور|د\.)\b", line):
-            cleaned = re.sub(r"^\s*(الدكتورة|الدكتور|دكتورة|دكتور|د\.)\s*", "د. ", line)
+        if re.search(r"^\s*(Ø§Ù„Ø¯ÙƒØªÙˆØ±Ø©|Ø§Ù„Ø¯ÙƒØªÙˆØ±|Ø¯ÙƒØªÙˆØ±Ø©|Ø¯ÙƒØªÙˆØ±|Ø¯\.)\b", line):
+            cleaned = re.sub(r"^\s*(Ø§Ù„Ø¯ÙƒØªÙˆØ±Ø©|Ø§Ù„Ø¯ÙƒØªÙˆØ±|Ø¯ÙƒØªÙˆØ±Ø©|Ø¯ÙƒØªÙˆØ±|Ø¯\.)\s*", "Ø¯. ", line)
             return compact_spaces(cleaned)
     for line in lines:
         normalized = normalize_text(line)
@@ -306,7 +363,9 @@ def extract_name(lines: list[str]) -> str | None:
             continue
         if _is_non_name_line(line):
             continue
-        if 2 <= len(line.split()) <= 5 and (re.search(r"[A-Za-zÀ-ÿ]", line) or ARABIC_RE.search(line)):
+        if 2 <= len(line.split()) <= 5 and (
+            re.search(r"[A-Za-z]", line) or ARABIC_RE.search(line)
+        ):
             return compact_spaces(line)
     return None
 
@@ -317,12 +376,15 @@ def _is_non_name_line(line: str) -> bool:
         return True
     if any(keyword in normalized for keyword in DENTAL_KEYWORDS | REJECT_KEYWORDS):
         return True
-    if any(token in line for token in ARABIC_ADDRESS_TOKENS):
+    if any(token in line for token in ARABIC_ADDRESS_TOKENS | REAL_ARABIC_ADDRESS_TOKENS):
         return True
     return False
 
 
 def extract_governorate(text: str) -> str | None:
+    postal_match = _postal_location_from_text(text)
+    if postal_match:
+        return postal_match[1]
     for alias, (_, governorate) in ARABIC_LOCALITY_ALIASES.items():
         if alias in text:
             return governorate
@@ -334,6 +396,9 @@ def extract_governorate(text: str) -> str | None:
 
 
 def extract_locality(text: str) -> str | None:
+    postal_match = _postal_location_from_text(text)
+    if postal_match:
+        return postal_match[0]
     for alias, (locality_name, _) in ARABIC_LOCALITY_ALIASES.items():
         if alias in text:
             return locality_name
@@ -354,10 +419,18 @@ def build_record(
 ) -> DentistRecord:
     title_prefix, first_name, last_name, name_status = parse_name(name)
     cabinet = extract_cabinet_name(lines)
-    address = extract_address(lines)
+    address = extract_address(lines, locality)
     if not governorate and locality:
         loc = locations.locality(locality)
         governorate = loc.governorate
+    if locality == "Aouina":
+        locality = "L'Aouina"
+    postal_code = _postal_code_from_text(text)
+    postal_match = _postal_location_from_text(text)
+    if postal_match:
+        postal_locality = "L'Aouina" if postal_match[0] == "Aouina" else postal_match[0]
+        locality = locality or postal_locality
+        governorate = governorate or postal_match[1]
     source_id = hashlib.sha1(text.encode("utf-8")).hexdigest()[:16]
     record = DentistRecord(
         source="business_card_ocr",
@@ -373,6 +446,7 @@ def build_record(
         address_raw=address,
         locality=locality,
         governorate=governorate,
+        postal_code=postal_code,
         phone_numbers=merge_phones(phones),
     )
     record.sync_phone_summary()
@@ -382,31 +456,33 @@ def build_record(
 def extract_title(text: str) -> str:
     normalized = normalize_text(text)
     arabic_text = _normalize_arabic(text)
-    if "تقويم" in arabic_text or "orthodontics" in normalized:
+    if "تقويم" in text or "تقويم" in arabic_text or "ØªÙ‚ÙˆÙŠÙ…" in arabic_text or "orthodontics" in normalized:
         return "Orthodontiste"
     if "orthodont" in normalized:
         return "Orthodontiste"
-    if "جراحه الفم" in arabic_text or "جراحه" in arabic_text:
+    if "جراحة الفم" in text or "جراحة" in text or "جراحه الفم" in arabic_text or "جراحه" in arabic_text or "Ø¬Ø±Ø§Ø­Ù‡" in arabic_text:
         return "Chirurgien dentiste"
     if "chirurgien dentiste" in normalized:
         return "Chirurgien dentiste"
     if (
         "medecin dentiste" in normalized
-        or "médecin dentiste" in normalized
+        or "mÃ©decin dentiste" in normalized
         or "طبيبه اسنان" in arabic_text
         or "طبيب اسنان" in arabic_text
+        or "Ø·Ø¨ÙŠØ¨Ù‡ Ø§Ø³Ù†Ø§Ù†" in arabic_text
+        or "Ø·Ø¨ÙŠØ¨ Ø§Ø³Ù†Ø§Ù†" in arabic_text
     ):
-        return "Médecin dentiste"
+        return "MÃ©decin dentiste"
     return "Dentiste"
 
 
 def _normalize_arabic(text: str) -> str:
     return (
-        text.replace("أ", "ا")
-        .replace("إ", "ا")
-        .replace("آ", "ا")
-        .replace("ى", "ي")
-        .replace("ة", "ه")
+        text.replace("Ø£", "Ø§")
+        .replace("Ø¥", "Ø§")
+        .replace("Ø¢", "Ø§")
+        .replace("Ù‰", "ÙŠ")
+        .replace("Ø©", "Ù‡")
     )
 
 
@@ -427,7 +503,7 @@ def extract_cabinet_name(lines: list[str]) -> str | None:
     return fallback
 
 
-def extract_address(lines: list[str]) -> str | None:
+def extract_address(lines: list[str], locality: str | None = None) -> str | None:
     candidates = []
     for line in lines:
         normalized = normalize_text(line)
@@ -435,15 +511,34 @@ def extract_address(lines: list[str]) -> str | None:
             continue
         if "@" in line or "www." in normalized:
             continue
-        if any(token in normalized for token in ["avenue", "rue", "immeuble", "centre", "route", "bloc", "etage", "étage"]):
+        if DOCTOR_TITLE_RE.search(line) or DOCTOR_TITLE_RE.search(normalized):
+            continue
+        if re.search(r"\b(avenue|rue|immeuble|centre|route|bloc|etage)\b", normalized) or "étage" in normalized:
             candidates.append(line)
-        elif any(token in line for token in ["شارع", "نهج", "طريق", "عمارة", "مركب", "الطابق", "عيادة", "العيادة", "حدائق", "حي"]):
+        elif re.search(r"\b[1-9]\d{3}\b", line):
             candidates.append(line)
-        elif any(token in line for token in EXTRA_ARABIC_ADDRESS_TOKENS):
+        elif locality and normalize_text(locality) in normalized:
+            candidates.append(line)
+        elif any(
+            token in line
+            for token in ARABIC_ADDRESS_TOKENS | EXTRA_ARABIC_ADDRESS_TOKENS | REAL_ARABIC_ADDRESS_TOKENS
+        ):
             candidates.append(line)
         elif any(alias in line for alias in ARABIC_LOCALITY_ALIASES):
             candidates.append(line)
     return compact_spaces(", ".join(candidates)) if candidates else None
+
+
+def _postal_code_from_text(text: str) -> str | None:
+    for match in re.findall(r"\b[1-9]\d{3}\b", text):
+        if match in POSTAL_LOCALITIES:
+            return match
+    return None
+
+
+def _postal_location_from_text(text: str) -> tuple[str, str, str | None] | None:
+    postal_code = _postal_code_from_text(text)
+    return POSTAL_LOCALITIES.get(postal_code) if postal_code else None
 
 
 def _is_contact_line(line: str) -> bool:
@@ -459,6 +554,6 @@ def _looks_like_named_cabinet(line: str) -> bool:
     normalized = normalize_text(line)
     if any(token in normalized for token in ["clinic", "clinique", "cabinet", "centre"]):
         return True
-    if any(token in line for token in ["عيادة", "العيادة", "مركز", "مصحة"]):
+    if any(token in line for token in ["Ø¹ÙŠØ§Ø¯Ø©", "Ø§Ù„Ø¹ÙŠØ§Ø¯Ø©", "Ù…Ø±ÙƒØ²", "Ù…ØµØ­Ø©"]):
         return len(line.split()) >= 2
     return False

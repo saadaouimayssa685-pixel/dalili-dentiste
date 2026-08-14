@@ -1,4 +1,4 @@
-import { MapPinned } from "lucide-react";
+﻿import { MapPinned } from "lucide-react";
 
 import { ChartCard } from "./ChartCard";
 import { formatNumber, type OverviewData } from "@/lib/overview-data";
@@ -13,7 +13,7 @@ const POSITIONS: Record<string, { x: number; y: number }> = {
   Nabeul: { x: 75, y: 20 },
   Zaghouan: { x: 56, y: 27 },
   Beja: { x: 39, y: 19 },
-  "BÃ©ja": { x: 39, y: 19 },
+  "Béja": { x: 39, y: 19 },
   Jendouba: { x: 28, y: 23 },
   "Le Kef": { x: 31, y: 35 },
   Siliana: { x: 43, y: 34 },
@@ -27,11 +27,11 @@ const POSITIONS: Record<string, { x: number; y: number }> = {
   Gafsa: { x: 36, y: 73 },
   Tozeur: { x: 25, y: 80 },
   Kebili: { x: 43, y: 86 },
-  "KÃ©bili": { x: 43, y: 86 },
+  "Kébili": { x: 43, y: 86 },
   Gabes: { x: 57, y: 80 },
-  "GabÃ¨s": { x: 57, y: 80 },
+  "Gabès": { x: 57, y: 80 },
   Medenine: { x: 66, y: 90 },
-  "MÃ©denine": { x: 66, y: 90 },
+  "Médenine": { x: 66, y: 90 },
   Tataouine: { x: 57, y: 97 },
 };
 
@@ -45,7 +45,7 @@ const LABEL_OFFSETS: Record<string, { x: number; y: number }> = {
   Nabeul: { x: 16, y: 14 },
   Zaghouan: { x: -82, y: 10 },
   Beja: { x: -58, y: -6 },
-  "BÃ©ja": { x: -58, y: -6 },
+  "Béja": { x: -58, y: -6 },
   Jendouba: { x: -92, y: -2 },
   "Le Kef": { x: -82, y: 2 },
   Siliana: { x: -72, y: 2 },
@@ -59,20 +59,20 @@ const LABEL_OFFSETS: Record<string, { x: number; y: number }> = {
   Gafsa: { x: -76, y: 4 },
   Tozeur: { x: -82, y: 0 },
   Kebili: { x: -62, y: 8 },
-  "KÃ©bili": { x: -62, y: 8 },
+  "Kébili": { x: -62, y: 8 },
   Gabes: { x: -76, y: 4 },
-  "GabÃ¨s": { x: -76, y: 4 },
+  "Gabès": { x: -76, y: 4 },
   Medenine: { x: 10, y: 8 },
-  "MÃ©denine": { x: 10, y: 8 },
+  "Médenine": { x: 10, y: 8 },
   Tataouine: { x: -76, y: -22 },
 };
 
 const cleanGovernorateName = (name: string) =>
   name
-    .replace("BÃ©ja", "Beja")
-    .replace("KÃ©bili", "Kebili")
-    .replace("GabÃ¨s", "Gabes")
-    .replace("MÃ©denine", "Medenine");
+    .replace("Béja", "Beja")
+    .replace("Kébili", "Kebili")
+    .replace("Gabès", "Gabes")
+    .replace("Médenine", "Medenine");
 
 export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] }) {
   const max = Math.max(...data.map((d) => d.dentists), 1);
@@ -144,3 +144,4 @@ export function TunisiaCoverageMap({ data }: { data: OverviewData["coverage"] })
     </ChartCard>
   );
 }
+
